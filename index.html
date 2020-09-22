@@ -8,7 +8,6 @@
       .grid-container {
         display: grid;
         grid-gap:20px;
-        grid-template-columns: auto auto auto auto auto auto auto auto;
       }
       .is-nprimary{
         color:#2a3d8d !important;
@@ -105,8 +104,8 @@
       <!-- Hero content: will be in the middle -->
       <div v-if="gameplay" class="hero-body">
         <div class="columns is-centered" style="min-width: 100%;">
-          <div class="column is-9">
-            <div class="grid-container animate__animated animate__fadeIn animate__slow">
+          <div class="column is-11">
+            <div class="grid-container animate__animated animate__fadeIn animate__slow" :style="{'grid-template-columns': get_grid}">
               <div v-for="n in current_numbers"
                 :class="{
                   'image num num-has-shadow animate__animated':true,

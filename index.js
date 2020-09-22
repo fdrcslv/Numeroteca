@@ -23,7 +23,7 @@ var app = new Vue({
       medium:[],
       hard:[]
     },
-    numbers:[1, 'rad2', 0.5, 356, 5, 23, 8, 1010, 1221, 3, 'pi', 'e', 98, 0.1236, 44, -8, 6, 9, 18, 64, 100, 456, 7897, 45, 77, 21, 12, 010, 54, 987, 31, 32],
+    numbers:[1, 'rad2', 0.5, 356, 5, 23, 8, 1010, 1221, 3, 'pi', 'e', 98, 0.1236, 44, -8, 6, 9, 18, 64, 100, 456, 7897, 45, 77, 21, 12, 010, 31, 32],
     current:-8,
     current_numbers:[],
     images_root: "assets/images/",
@@ -177,6 +177,16 @@ var app = new Vue({
     }
   },
   computed:{
+    get_grid: function(){
+      if(!this.current_numbers) return 'auto';
+      if(this.current_numbers.length > 22){
+        return Array(10).fill('auto').join(' ')
+      } else if(this.current_numbers.length > 10){
+        return Array(7).fill('auto').join(' ')
+      } else if (this.current_numbers.length > 9){
+        return Array(5).fill('auto').join(' ')
+      }
+    },
     active_questions: function(){
       if(!this.mode){
         return [];
