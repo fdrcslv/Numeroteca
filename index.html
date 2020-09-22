@@ -7,29 +7,182 @@
     <style media="screen">
       .grid-container {
         display: grid;
-        grid-gap:10px;
+        grid-gap:20px;
         grid-template-columns: auto auto auto auto auto auto auto auto;
       }
+      .is-nprimary{
+        color:#2a3d8d !important;
+      }
+      .num{
+        border-radius: 2px;
+      }
+      .num-has-shadow {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.2s cubic-bezier(.25,.8,.25,1);
+      }
+
+      .num-has-shadow:hover {
+        transform: scale(1.01);
+        box-shadow: 0 14px 16px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+      }
+      .hero.has-background {
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-background {
+        position: absolute;
+        object-fit: cover;
+        object-position: center center;
+        width: 100%;
+        height: 100%;
+      }
+      .hero-background.is-transparent {
+        opacity: 0.3;
+      }
+      .animate__fast-100ms{
+        animation-duration:100ms
+      }
+      .glow{
+        box-shadow: 0 0 10px 2px #f14668, 0 0 0 2px #f14668
+      }
+      .glow:hover{
+        box-shadow: 0 0 10px 5px #f14668, 0 0 1px 2px #f14668
+      }
+      .glow-right{
+        box-shadow: 0 0 10px 2px #00d1b2, 0 0 0 2px #00d1b2
+      }
+      .glow-right:hover{
+        box-shadow: 0 0 10px 5px #00d1b2, 0 0 1px 2px #00d1b2
+      }
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.0/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.0/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500&display=swap" rel="stylesheet">
   </head>
-  <body>
-    <div id="app">
-      <div class="columns is-centered">
-        <div class="column is-11">
-          <div class="grid-container">
-            <div v-for="i in Array(cols)" class="box is-marginless">
-              card
+  <body style="font-family: 'Rubik', sans-serif;">
+    <section id='app' class="hero is-fullheight is-light has-background">
+      <img alt="" v-if="!gameplay" class="hero-background" src="assets/images/background.png" style="z-index:1"/>
+      <!-- Hero head: will stick at the top -->
+      <div class="hero-head">
+        <nav class="navbar">
+          <div class="container">
+            <div class="navbar-brand animate__animated animate__fadeInLeft">
+              <a class="navbar-item" style="width: 56px;padding: 5px;">
+                <img src="./assets/images/logo-stroked.png" alt="Logo" style="max-height: 56px">
+              </a>
+              <span class="navbar-burger burger" data-target="navbarMenuHeroA">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </div>
+            <div v-if="gameplay" id="navbarMenuHeroA" class="navbar-menu animate__animated animate__fadeInDown">
+              <div class="navbar-end">
+                <span class="navbar-item">
+                  <a class="button" @click="back">
+                    <span class="icon">
+                      <i class="fas fa-arrow-left"></i>
+                    </span>
+                    <span>Indietro</span>
+                  </a>
+                </span>
+                <span class="navbar-item">
+                  <a class="button" @click="start(mode)">
+                    <span class="icon">
+                      <i class="fas fa-redo-alt"></i>
+                    </span>
+                    <span>Restart</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <!-- Hero content: will be in the middle -->
+      <div v-if="gameplay" class="hero-body">
+        <div class="columns is-centered" style="min-width: 100%;">
+          <div class="column is-9">
+            <div class="grid-container animate__animated animate__fadeIn animate__slow">
+              <div v-for="n in current_numbers"
+                :class="{
+                  'image num num-has-shadow animate__animated':true,
+                  'animate__fadeIn':animate_cards,
+                  'glow animate__bounce':eliminated.has(n),
+                  'glow-right':!not_checked && !eliminated.has(n),
+                  'animate__flipOutX animate__fast-100ms': is_eliminating && eliminated.has(n)
+                }"
+                :style="{'animation-delay':delay(n)}"
+              ><div></div>
+                <img src="./assets/images/404.png" alt="">
+                <!-- :src="get_image(n)" -->
+
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="columns is-centered">
-
+      <div v-else class="hero-body" style="z-index: 2">
       </div>
-
+      <!-- Hero footer: will stick at the bottom -->
+      <div class="hero-foot" style="z-index: 2">
+        <div v-if="gameplay" class="columns is-marginless" style="justify-content: flex-end">
+          <div class="column is-5">
+            <!-- Main container -->
+  <nav class="level box animate__animated animate__fadeInUp animate__faster has-text-centered">
+  <!-- Left side -->
+  <div class="level-left">
+    <div class="level-item">
+      <h1 class="is-size-3">#{{current_question + 1}}</h1>
     </div>
+    <div class="level-item">
+      <p>{{current_question_content}}</p>
+    </div>
+  </div>
+  <p class="level-item">
+  <template v-if="not_checked">
+  </template>
+  <template v-else>
+    <p v-if="answer" class="is-size-3"> SI! <span class="icon has-text-primary"> <i class="fas fa-check"></i></span></p>
+    <p v-else class="is-size-3"> NO! <span class="icon has-text-danger"> <i class="fas fa-times"></i></span></p>
+  </template>
+  </p>
+  <!-- Right side -->
+  <div class="level-right">
+
+    <p class="level-item">
+      <a
+      v-if="not_checked"
+      class="button is-fullwidth is-warning"
+      type="button" name="button"
+      @click="check_current()">
+      Mostra Risposta</a>
+      <a
+      v-else="not_checked"
+      class="button is-fullwidth is-danger"
+      type="button" name="button"
+      @click="checks()">
+      Elimina Carte</a>
+    </p>
+  </div>
+  </nav>
+
+          </div>
+        </div>
+      <div v-else class="box animate__animated animate__fadeInUp animate__delay-300ms animate__faster">
+        <h1 class="is-size-2">Benvenuto!</h1>
+        <p style="margin-bottom:5px">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <div class="buttons are-medium">
+          <button class="button is-primary" @click="start('easy')">Facile</button>
+          <button class="button is-warning" @click="start('medium')">Medio</button>
+          <button class="button is-danger" @click="start('hard')">Difficile</button>
+        </div>
+      </div>
+    </div>
+    </section>
   </body>
   <script src="./index.js"></script>
 </html>
