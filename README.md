@@ -19,7 +19,7 @@ Every game level has a set of numbers to choose from.
 
 The structure of the json is this:
 
-‘’’
+‘’’’
 {
     easy:{
         numbers:[2,3,’rad2’,1024,’pi’...],
@@ -33,4 +33,4 @@ The structure of the json is this:
             }
     }
 
-‘’’
+‘’’‘
