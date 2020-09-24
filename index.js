@@ -10,21 +10,64 @@ var app = new Vue({
     not_checked: true,
     question_list:[],
     current_question:0,
-    question_collection:[
-      ['is_multiple_of', [5], "E' multiplo di 5?"],
-      ['is_multiple_of', [2], "E' multiplo di 2"],
-      ['is_binary', [], "E' binario?"],
-      ['contains_digit', [9], 'Contiene il numero 9?'],
-      ['is_palindrome', [], "E' palindromo?"],
-      ['has_sign', [-1], "E' negativo?"]
-    ],
+    question_collection:{
+      is_odd: arg => [[], "E' un numero dispari?"],
+      is_multiple_of: arg => [[arg], `E' multiplo di ${arg}?`],
+      contains_digit: arg => [[arg], `Contiene il numero ${arg}?`],
+      has_length: arg => [[arg], `Ha una lunghezza di ${arg} cifre?`],
+      has_length: arg => [[arg], `Ha una lunghezza di ${arg} cifre o più?`],
+      has_sign: arg => [[arg], `Ha segno ${arg.toString().split('')[0]} ?`],
+      is_integer: arg => [[], "E' un numero intero?"],
+      is_palindrome: arg => [[], "E' un numero palindromo?"],
+      is_lesser_than: arg => [[arg], `E' un numero minore di ${arg}?`],
+      is_platonic: arg => [[], "E' un numero platonico?"],
+      is_perfect: arg => [[], "E' un numero perfetto?"],
+      is_power_of: arg => [[arg], `E' una potenza di ${arg}?`],
+      is_fibonacci: arg => [[], "E' un numero della serie di Fibonacci?"],
+      is_prime: arg => [[], "E' un numero primo?"],
+      is_decimal: arg => [[], "E' un numero decimale?"],
+      is_binary: arg => [[], "E' un numero binario?"],
+      is_made_of_n_digits_equal: arg => [[arg], `E' composto da ${arg} cifre uguali?`]
+    },
     questions:{
-      easy:[4, 1, 2, 3, 5,],
+      easy:[
+        'is_multiple_of(3)',
+        'is_multiple_of(5)',
+        'is_odd',
+        'contains_digit(1)',
+        'has_length(1)',
+        'is_made_of_n_digits_equal(2)'
+      ],
       medium:[],
       hard:[]
     },
-    numbers:[1, 'rad2', 0.5, 356, 5, 23, 8, 1010, 1221, 3, 'pi', 'e', 98, 0.1236, 44, -8, 6, 9, 18, 64, 100, 456, 7897, 45, 77, 21, 12, 010, 31, 32],
-    current:-8,
+    numbers:{
+      easy:Array.from(Array(30).keys()),
+      medium:[1, 'rad2', 0.5, 356, 5, 23, 8, 1010, 1221, 3, 'pi', 'e', 98, 0.1236, 44, -8, 6, 9, 18, 64, 100, 456, 7897, 45, 77, 21, 12, 010, 31, 32],
+    },
+    star_numbers:{
+      pi:{
+        value:Math.PI,
+        props: new Set(['irrational', 'transcendental'])
+      },
+      e:{
+        value:Math.E,
+        props: new Set(['irrational', 'transcendental'])
+      },
+      rad2:{
+        value: Math.SQRT2,
+        props: new Set(['irrational', 'algebric'])
+      },
+      phi:{
+        value:(1 + Math.sqrt(5)) / 2,
+        props: new Set(['irrational', 'algebric'])
+      },
+      '1/2':{
+        value: 0.5,
+        props: new Set(['fraction']),
+      }
+    },
+    current:11,
     current_numbers:[],
     images_root: "assets/images/",
     check_functions: {
@@ -82,6 +125,13 @@ var app = new Vue({
           }
           return num > 1;
         },
+        is_decimal: function(n){
+          if (n.fraction){
+            return false
+          } else {
+            return this.check_functions.is_integer(n)
+          }
+        },
         is_binary:  function (n){
           var nlist = n.toString().split('').map(x => Number(x))
           var n_set = new Set(nlist)
@@ -93,6 +143,14 @@ var app = new Vue({
             return false
           }
         },
+        is_made_of_n_digits_equal: function(num, n){
+          if(num.length != n){
+            return false
+          } else {
+            var digits = num.toString().split()
+            return digits.every(d => d == digits[0])
+          }
+        }
       }
   },
   methods:{
@@ -108,8 +166,8 @@ var app = new Vue({
       this.not_checked = true;
       this.mode = mode;
       this.question_list = this.questions[mode];
-      this.current_numbers = JSON.parse(JSON.stringify(this.numbers));
-      this.shuffle_array(this.current_numbers)
+      this.current_numbers = JSON.parse(JSON.stringify(this.numbers[this.mode]));
+      // this.shuffle_array(this.current_numbers)
       this.current_question = 0
     },
     back: function(){
@@ -179,23 +237,37 @@ var app = new Vue({
   computed:{
     get_grid: function(){
       if(!this.current_numbers) return 'auto';
-      if(this.current_numbers.length > 22){
-        return Array(10).fill('auto').join(' ')
-      } else if(this.current_numbers.length > 10){
-        return Array(7).fill('auto').join(' ')
-      } else if (this.current_numbers.length > 9){
-        return Array(5).fill('auto').join(' ')
+      var len = this.current_numbers.length;
+      const get_cols = cols => Array(cols).fill('auto').join(' ')
+      if(len > 24 ){
+        return get_cols(10)
+      } else if (len > 8){
+        return get_cols(8)
+      } else if (len > 1){
+        return get_cols(4)
+      } else {
+        return 'auto 200px auto'
       }
     },
     active_questions: function(){
       if(!this.mode){
         return [];
       }
-      qst = []
-      for (let i in this.questions[this.mode]){
-        qst.push(this.question_collection[this.questions[this.mode][i]])
+      var questions = [];
+      var regExp = /\(([^)]+)\)/;
+      for (let k in this.questions[this.mode]){
+        var qst = this.questions[this.mode][k]
+        var arg;
+        try {
+          arg = regExp.exec(qst)[1];
+        } catch (e) {
+          arg = null
+        }
+        var func = qst.split("(")[0]
+        console.log(func, arg);
+        questions.push([func].concat(this.question_collection[func](arg)))
       }
-      return qst
+      return questions
     },
     current_question_content: function(){
       if(this.current_question < this.active_questions.length){

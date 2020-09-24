@@ -62,7 +62,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500&display=swap" rel="stylesheet">
   </head>
   <body style="font-family: 'Rubik', sans-serif;">
-    <section id='app' class="hero is-fullheight is-light has-background">
+    <section id='app' class="hero is-fullheight has-background">
       <img alt="" v-if="!gameplay" class="hero-background" src="assets/images/background.png" style="z-index:1"/>
       <!-- Hero head: will stick at the top -->
       <div class="hero-head">
@@ -117,6 +117,7 @@
                 :style="{'animation-delay':delay(n)}"
               ><div></div>
                 <img src="./assets/images/404.png" alt="">
+                <span style="position:absolute;">{{n}}</span>
                 <!-- :src="get_image(n)" -->
 
               </div>
