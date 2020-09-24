@@ -144,10 +144,12 @@ var app = new Vue({
           }
         },
         is_made_of_n_digits_equal: function(num, n){
-          if(num.length != n){
+          console.log(num, num.length, n);
+          if(num.toString().length != n){
             return false
           } else {
-            var digits = num.toString().split()
+            var digits = num.toString().split("")
+            console.log(digits);
             return digits.every(d => d == digits[0])
           }
         }
@@ -239,14 +241,14 @@ var app = new Vue({
       if(!this.current_numbers) return 'auto';
       var len = this.current_numbers.length;
       const get_cols = cols => Array(cols).fill('auto').join(' ')
-      if(len > 24 ){
+      if(len > 16 ){
         return get_cols(10)
-      } else if (len > 8){
+      } else if (len > 4){
         return get_cols(8)
       } else if (len > 1){
         return get_cols(4)
       } else {
-        return 'auto 200px auto'
+        return 'auto 460px auto'
       }
     },
     active_questions: function(){
