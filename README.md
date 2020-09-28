@@ -80,8 +80,12 @@ These are the currentlòy suported questions, for integers, decimal, fractions, 
 
 ### 2.2 Question formatting in games.json
 To instruct the app to ask a question, just pick a question from the list and write it in the ```questions``` list parameter of the game. If
-a question needs am additional parameter (i.e. is_multiple_of) the string will be "is_multiple_of(11)".
-If the question doesn't need a parameter (i.e. is_irrational), just write "is_irrational" in the list of questions.
+a question needs am additional parameter (i.e. is_multiple_of) the string will be 
+
+```"is_multiple_of(11)"```
+
+
+If the question doesn't need a parameter (i.e. is_irrational), just write ```"is_irrational"``` in the list of questions.
 
 ### 2.2.1 Example of questions for the number 11
 
@@ -100,9 +104,18 @@ If the question doesn't need a parameter (i.e. is_irrational), just write "is_ir
 
 The special numbers supported are:
 
-* Pi
+* pi
 * e
 * phi
-* root 2
+* root2
 
 Also fractions (like 1/2) need a special treatment since their representation is different from their value. The question "contains_digit(2)" for 1/2 is true for its representation, but not for its value.
+
+## 4. Images
+File names for the number cards are the same as the number thei represent: 1.jpg for the number 1 and pi.jpg for Pi.
+
+In some cases we follow two simple rules of substitution:
+
+Numbers like 0.4 map to a filename like 04.jpeg
+
+Numbers like 1/2 map to a filename formatted as 1over2.jpeg
