@@ -88,7 +88,7 @@
           <div class="column is-12">
             <div v-for="i in Array.from(Array(3).keys())" class="columns">
               <div v-for="j in Array.from({length: 10}, (_, i) => i + 1)" class="column" :style="{'transition': 'all ease 0.5s', 'transform': get_translation(j, i)}">
-                <img @click="translating=!translating; pick()" class="num num-has-shadow":src="get_image(j)" alt="">
+                <img @click="translating=!translating; pick()" class="num num-has-shadow"src="./assets/images/back/0.png" alt="">
               </div>
             </div>
             <div class="columns is-centered is-marginless">
