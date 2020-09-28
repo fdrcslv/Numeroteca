@@ -13,7 +13,38 @@
   </head>
   <body style="font-family: 'Rubik', sans-serif;">
     <section id='app' class="hero is-fullheight has-background">
-      <img alt="" v-if="!gameplay" class="hero-background" src="assets/images/background.png" style="z-index:1"/>
+      <!-- number info modal  -->
+      <div @click="get_info()" :class="{'modal':true, 'is-active':info.number_info}">
+        <div :class="{'modal-background animate__animated':true,
+          'animate__fadeIn animate__slow':info.number_info && !info.is_hiding_info,
+          'animate__fadeOut animated__faster':info.is_hiding_info
+          }">
+        </div>
+        <div :class="{
+          'modal-card animate__animated':true,
+          'animate__fadeInDown animate__faster': info.number_info && !info.is_hiding_info,
+          'animate__fadeOutUp animated_faster':info.is_hiding_info
+          }">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Informazioni</p>
+            <button class="delete" aria-label="close" @click="get_info()"></button>
+          </header>
+          <section class="modal-card-body">
+
+            <div class="columns">
+              <div class="column is-one-third">
+                <div class="image">
+                  <img v-if="info.info_selection" :src="get_image(info.info_selection)" alt="">
+                </div>
+              </div>
+              <div class="column">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+      <img alt="" v-if="phases.welcome" class="hero-background" src="assets/images/background.png" style="z-index:1"/>
       <!-- Hero head: will stick at the top -->
       <div class="hero-head">
         <nav class="navbar">
@@ -28,7 +59,7 @@
                 <span></span>
               </span>
             </div>
-            <div v-if="gameplay" id="navbarMenuHeroA" class="navbar-menu animate__animated animate__fadeInDown">
+            <div v-if="phases.gameplay" id="navbarMenuHeroA" class="navbar-menu animate__animated animate__fadeInDown">
               <div class="navbar-end">
                 <span class="navbar-item">
                   <a class="button" @click="back">
@@ -52,7 +83,18 @@
         </nav>
       </div>
       <!-- Hero content: will be in the middle -->
-      <div v-if="gameplay" class="hero-body">
+      <div v-if ="phases.chosing_for_you" class="hero-body">
+        <div class="columns is-centered">
+          <div class="column is-12">
+            <div v-for="i in Array.from(Array(3).keys())" class="columns">
+              <div v-for="j in Array.from({length: 10}, (_, i) => i + 1)" class="column" :style="{'transition': 'all ease 0.5s', 'transform': get_translation(j, i)}">
+                <img @click="translating=!translating" class="num num-has-shadow":src="get_image(j)" alt="">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="phases.gameplay" class="hero-body">
         <div class="columns is-centered" style="min-width: 100%;">
           <div class="column is-11">
             <div v-if="current_numbers.length > 2" class="grid-container animate__animated animate__fadeIn animate__slow" :style="{'grid-template-columns': get_grid}">
@@ -60,13 +102,19 @@
                   :class="{
                     'image num num-has-shadow animate__animated filler':true,
                     'animate__fadeIn':animate_cards,
-                    'glow animate__bounce':eliminated.has(n),
-                    'glow-right':!not_checked && !eliminated.has(n),
-                    'animate__flipOutX animate__fast': is_eliminating && eliminated.has(n)
+                    'glow animate__bounce animate__faster':fake_eliminated.has(n),
+                    'glow-right':!not_checked && is_eliminating && !eliminated.has(n),
+                    'glow animate__flipOutX animate__fast': is_eliminating && eliminated.has(n)
                   }"
                   :style="{'animation-delay':delay(n)}"
+                  @click="toggle_fake_eliminated(n)"
                 >
                   <img :src="get_image(n)" alt="">
+                  <a  type="button" class="num-info has-text-white" name="button" @click.stop="get_info(n)">
+                    <div class="icon">
+                      <i class="fas fa-info-circle"></i>
+                    </div>
+                  </a>
                   <span style="position:absolute;">{{n}}</span>
                 </div>
             </div>
@@ -92,7 +140,7 @@
       </div>
       <!-- Hero footer: will stick at the bottom -->
       <div class="hero-foot" style="z-index: 2">
-        <div v-if="gameplay" class="columns is-marginless is-centered">
+        <div v-if="phases.gameplay" class="columns is-marginless is-centered">
           <div class="column is-7">
             <!-- Main container -->
   <nav class="level box animate__animated animate__fadeInUp animate__faster has-text-centered">
@@ -102,7 +150,7 @@
       <h1 class="is-size-3">#{{current_question + 1}}</h1>
     </div>
     <div class="level-item">
-      <p>{{current_question_content}}</p>
+      <p class="is-size-3">{{current_question_content}}</p>
     </div>
   </div>
   <p class="level-item">
@@ -141,10 +189,9 @@
     </p>
   </div>
   </nav>
-
           </div>
         </div>
-      <div v-else class="box animate__animated animate__fadeInUp animate__delay-300ms animate__faster">
+      <div v-if="phases.welcome" class="box animate__animated animate__fadeInUp animate__delay-300ms animate__faster">
         <h1 class="is-size-2">Benvenuto!</h1>
         <p style="margin-bottom:5px">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         <div class="buttons are-medium">

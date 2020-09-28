@@ -47,8 +47,30 @@
   box-shadow: 0 0 10px 5px #00d1b2, 0 0 1px 3px #00d1b2
 }
 
+.num:hover .num-info {
+   visibility:visible;
+}
+.num-info{
+  position: absolute;
+  visibility:hidden;;
+    top: 0;
+    right: 0;
+}
+
 .filler{
   background-image: url(/assets/images/404.png);
     background-position: center;
     background-size: contain;
+}
+
+.chosing-item{
+  transition: all 1s ease;
+}
+
+.chosing-grid{
+  position: relative;
+  transition: all 1s ease;
+  display:grid;
+  grid-gap:10px;
+  grid-template-columns: auto auto auto auto auto auto auto auto auto auto;
 }

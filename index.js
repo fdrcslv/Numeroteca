@@ -2,11 +2,22 @@ var app = new Vue({
   el:'#app',
   data:{
     animate_cards:false,
-    gameplay:false,
+    translating:true,
+    phases:{
+      welcome:true,
+      chosing_for_you:false,
+      gameplay: false,
+    },
     is_eliminating:false,
     mode:false,
     answer:false,
     eliminated:new Set(),
+    fake_eliminated: new Set(),
+    info:{
+      number_info:false,
+      is_hiding_info:false,
+      info_selection:false,
+    },
     not_checked: true,
     question_list:[],
     current_question:0,
@@ -186,15 +197,30 @@ var app = new Vue({
    xhttp.send()
   },
   methods:{
+    toggle_phase: function(phase){
+      Object.keys(this.phases).forEach(v => this.phases[v] = false);
+      this.phases[phase] = true;
+    },
+    get_z_index:function(){
+      return Math.floor(Math.random()*10);
+    },
+    get_translation: function(i, j){
+      if (!this.translating){
+        return 'translate(0,0)'
+      } else {
+        return `translate(${-100*(i-1)+450}%,${-j*100+100+i}%) scale(3)`
+      }
+    },
     start: function(mode){
+      this.toggle_phase('chosing_for_you')
       this.is_eliminating=false;
       this.mode=mode;
       this.tada= true;
       this.answer=false;
       this.eliminated=new Set();
+      this.fake_eliminated=new Set();
       this.not_checked= true;
       this.current_question=0;
-      this.gameplay = true;
       this.not_checked = true;
       var pick  = Math.floor(Math.random() * this.games[this.mode].games.length)
       this.questions = this.games[this.mode].games[pick].questions;
@@ -204,7 +230,7 @@ var app = new Vue({
       this.current_question = 0
     },
     back: function(){
-      this.gameplay = false;
+      this.phases.gameplay = false;
       this.current_numbers = [];
     },
     shuffle_array: function(shuffled) {
@@ -214,6 +240,15 @@ var app = new Vue({
             shuffled[i] = shuffled[j];
             shuffled[j] = temp;
         }
+    },
+    toggle_fake_eliminated: function(n){
+      console.log(n);
+      if(this.fake_eliminated.has(n)){
+        this.fake_eliminated.delete(n)
+      } else {
+        this.fake_eliminated.add(n)
+      }
+      this.$forceUpdate()
     },
     check_current: function(){
         this.not_checked = false;
@@ -265,7 +300,7 @@ var app = new Vue({
         }
         return func(...[temp_el].concat(args))
       }
-
+      this.fake_eliminated = new Set()
       window.setTimeout(function () {
         if(root.passes_test){
           root.current_numbers = root.current_numbers.filter(el => filter_function(el, args));
@@ -295,6 +330,20 @@ var app = new Vue({
         return rand+'ms'
       } else {
         return 0
+      }
+    },
+    get_info: function(n){
+      console.log(this.info.number_info);
+      if(n){
+        this.info.info_selection = n;
+        this.info.number_info = !this.info.number_info;
+      } else {
+        this.info.is_hiding_info = true
+        var root = this
+        window.setTimeout(function(){
+          root.info.number_info = false;
+          root.info.is_hiding_info = false;
+        }, 500)
       }
     }
   },
