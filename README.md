@@ -2,6 +2,8 @@
 
 Simple static app for the Numeroteca game.
 
+Check it here https://fdrcslv.github.io/Numeroteca/
+
 ## 1. Games.json
 Games.json is the static file that contains all the information needed by the app to play a round of Numeroteca. 
 One game needs:
