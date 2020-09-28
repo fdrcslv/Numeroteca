@@ -281,7 +281,7 @@ var app = new Vue({
     get_image: function(n){
       return this.images_root +
       `${this.mode}/` +
-      n.toString().replace('.','').replace('/', 'su') +
+      n.toString().replace('.','').replace('/', 'over') +
       '.jpg'
     },
     delay: function(n){
