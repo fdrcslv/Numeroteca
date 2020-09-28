@@ -10,12 +10,13 @@ var app = new Vue({
     not_checked: true,
     question_list:[],
     current_question:0,
+    questions:[],
     question_collection:{
       is_odd: arg => [[], "E' un numero dispari?"],
       is_multiple_of: arg => [[arg], `E' multiplo di ${arg}?`],
       contains_digit: arg => [[arg], `Contiene il numero ${arg}?`],
       has_length: arg => [[arg], `Ha una lunghezza di ${arg} cifre?`],
-      has_length: arg => [[arg], `Ha una lunghezza di ${arg} cifre o più?`],
+      has_length_or_more: arg => [[arg], `Ha una lunghezza di ${arg} cifre o più?`],
       has_sign: arg => [[arg], `Ha segno ${arg.toString().split('')[0]} ?`],
       is_integer: arg => [[], "E' un numero intero?"],
       is_palindrome: arg => [[], "E' un numero palindromo?"],
@@ -29,22 +30,8 @@ var app = new Vue({
       is_binary: arg => [[], "E' un numero binario?"],
       is_made_of_n_digits_equal: arg => [[arg], `E' composto da ${arg} cifre uguali?`]
     },
-    questions:{
-      easy:[
-        'is_multiple_of(3)',
-        'is_multiple_of(5)',
-        'is_odd',
-        'contains_digit(1)',
-        'has_length(1)',
-        'is_made_of_n_digits_equal(2)'
-      ],
-      medium:[],
-      hard:[]
-    },
-    numbers:{
-      easy:Array.from(Array(30).keys()),
-      medium:[1, 'rad2', 0.5, 356, 5, 23, 8, 1010, 1221, 3, 'pi', 'e', 98, 0.1236, 44, -8, 6, 9, 18, 64, 100, 456, 7897, 45, 77, 21, 12, 010, 31, 32],
-    },
+    games:{},
+    games_loaded:false,
     star_numbers:{
       pi:{
         value:Math.PI,
@@ -67,15 +54,18 @@ var app = new Vue({
         props: new Set(['fraction']),
       }
     },
-    current:11,
+    tada:true,
+    current:false,
     current_numbers:[],
     images_root: "assets/images/",
     check_functions: {
+        is_irrational: function(n):{
+          return 1
+        },
         is_odd: function(n){
           return n % 2 != 0
         },
         is_multiple_of: function(n, d){
-          console.log(n,d)
           return n % d == 0
         },
         contains_digit: function(n, match){
@@ -144,31 +134,43 @@ var app = new Vue({
           }
         },
         is_made_of_n_digits_equal: function(num, n){
-          console.log(num, num.length, n);
           if(num.toString().length != n){
             return false
           } else {
             var digits = num.toString().split("")
-            console.log(digits);
             return digits.every(d => d == digits[0])
           }
         }
       }
   },
+  created(){
+    var root = this;
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        root.games = JSON.parse(this.responseText)
+        root.games_loaded = true;
+       }
+     };
+
+   xhttp.open("GET", "assets/games.json", true);
+   xhttp.send()
+  },
   methods:{
     start: function(mode){
-      this.is_eliminating=false,
-      this.mode=mode,
-      this.answer=false,
-      this.eliminated=new Set(),
-      this.not_checked= true,
-      this.question_list=[],
-      this.current_question=0,
+      this.is_eliminating=false;
+      this.mode=mode;
+      this.tada= true;
+      this.answer=false;
+      this.eliminated=new Set();
+      this.not_checked= true;
+      this.current_question=0;
       this.gameplay = true;
       this.not_checked = true;
-      this.mode = mode;
-      this.question_list = this.questions[mode];
-      this.current_numbers = JSON.parse(JSON.stringify(this.numbers[this.mode]));
+      var pick  = Math.floor(Math.random() * this.games[this.mode].games.length)
+      this.questions = this.games[this.mode].games[pick].questions;
+      this.current_numbers = JSON.parse(JSON.stringify(this.games[this.mode].numbers));
+      this.current = this.games[this.mode].games[pick].current;
       // this.shuffle_array(this.current_numbers)
       this.current_question = 0
     },
@@ -190,6 +192,7 @@ var app = new Vue({
         var args = this.active_questions[this.current_question][1]
         var func = this.check_functions[type]
         this.passes_test = func(...[this.current].concat(args))
+        const 
         if(this.passes_test){
           this.eliminated = new Set(this.current_numbers.filter(el => !func(...[el].concat(args))));
           this.answer = this.passes_test
@@ -217,10 +220,10 @@ var app = new Vue({
 
     },
     get_image: function(n){
-
       return this.images_root +
+      `${this.mode}/` +
       n.toString().replace('.','') +
-      '.png'
+      '.jpg'
     },
     delay: function(n){
       if(this.is_eliminating){
@@ -257,8 +260,8 @@ var app = new Vue({
       }
       var questions = [];
       var regExp = /\(([^)]+)\)/;
-      for (let k in this.questions[this.mode]){
-        var qst = this.questions[this.mode][k]
+      for (let k in this.questions){
+        var qst = this.questions[k]
         var arg;
         try {
           arg = regExp.exec(qst)[1];
@@ -266,7 +269,6 @@ var app = new Vue({
           arg = null
         }
         var func = qst.split("(")[0]
-        console.log(func, arg);
         questions.push([func].concat(this.question_collection[func](arg)))
       }
       return questions
@@ -275,7 +277,12 @@ var app = new Vue({
       if(this.current_question < this.active_questions.length){
         return this.active_questions[this.current_question][2]
       } else {
-        return 'END!'
+        var root = this;
+        window.setTimeout(function(){
+          root.tada = false
+        }, 1000)
+
+        return `Complimenti! Il numero misterioso è ${this.current}`
       }
 
     }

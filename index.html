@@ -4,122 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Numeroteca</title>
-    <style media="screen">
-      .grid-container {
-        display: grid;
-        grid-gap:20px;
-      }
-      .is-nprimary{
-        color:#2a3d8d !important;
-      }
-      .num{
-        border-radius: 2px;
-      }
-      .num-has-shadow {
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        transition: all 0.2s cubic-bezier(.25,.8,.25,1);
-      }
-
-      .num-has-shadow:hover {
-        transform: scale(1.01);
-        box-shadow: 0 14px 16px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-      }
-      .hero.has-background {
-        position: relative;
-        overflow: hidden;
-      }
-      .hero-background {
-        position: absolute;
-        object-fit: cover;
-        object-position: center center;
-        width: 100%;
-        height: 100%;
-      }
-      .hero-background.is-transparent {
-        opacity: 0.3;
-      }
-      .animate__fast-100ms{
-        animation-duration:100ms
-      }
-      .glow{
-        box-shadow: 0 0 10px 2px #f14668, 0 0 0 2px #f14668
-      }
-      .glow:hover{
-        box-shadow: 0 0 10px 5px #f14668, 0 0 1px 2px #f14668
-      }
-      .glow-right{
-        box-shadow: 0 0 10px 2px #00d1b2, 0 0 0 2px #00d1b2
-      }
-      .glow-right:hover{
-        box-shadow: 0 0 10px 5px #00d1b2, 0 0 1px 2px #00d1b2
-      }
-      .flip-card {
-  background-color: transparent;
-  perspective: 1000px;
-}
-
-.flip-card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-}
-
-.flip-card-inner {
-  transform: rotateY(180deg);
-}
-
-.flip-card-front, .flip-card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-.flip-card-front {
-  -webkit-animation:
-        Rotate 2000ms linear 0ms infinite;
-}
-
-.flip-card-back {
-  margin: -120% 0 0 0;
-  transform: rotateY(180deg);
-  animation:
-      BackRotate 2000ms linear 0ms infinite;
-}
-
-@keyframes BackRotate {
-    0% {transform:rotateY(180deg);}
-    80%{tranform:rotateY(180deg);}
-    100% {transform:rotateY(540deg);}
-}
-
-@-webkit-keyframes BackRotate {
-    0% {-webkit-transform:rotateY(180deg);}
-    80%{tranform:rotateY(180deg);}
-    100% {-webkit-transform:rotateY(540deg);}
-}
-
-@-webkit-keyframes Rotate {
-     0% {-webkit-transform:rotateY(0deg);}
-     80%{tranform:rotateY(0deg);}
-     100% {-webkit-transform:rotateY(360deg);}
-}
-
-@keyframes Rotate {
-     0% {transform:rotateY(0deg);}
-     80%{tranform:rotateY(0deg);}
-     100% {transform:rotateY(360deg);}
-}
-
-    </style>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.0/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/custom.css">
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500&display=swap" rel="stylesheet">
   </head>
   <body style="font-family: 'Rubik', sans-serif;">
@@ -169,29 +58,29 @@
             <div v-if="current_numbers.length > 2" class="grid-container animate__animated animate__fadeIn animate__slow" :style="{'grid-template-columns': get_grid}">
                 <div v-for="n in current_numbers"
                   :class="{
-                    'image num num-has-shadow animate__animated':true,
+                    'image num num-has-shadow animate__animated filler':true,
                     'animate__fadeIn':animate_cards,
                     'glow animate__bounce':eliminated.has(n),
                     'glow-right':!not_checked && !eliminated.has(n),
-                    'animate__flipOutX animate__fast-100ms': is_eliminating && eliminated.has(n)
+                    'animate__flipOutX animate__fast': is_eliminating && eliminated.has(n)
                   }"
                   :style="{'animation-delay':delay(n)}"
                 >
-                  <img src="./assets/images/404.png" alt="">
-                  <span style="position:absolute;">{{n}}</span>
+                  <img :src="get_image(n)" alt="">
+                  <!-- <span style="position:absolute;">{{n}}</span> -->
                 </div>
             </div>
             <div v-else class="columns is-centered">
               <div class="column is-4">
-                <div class="flip-card">
-                  <div class="flip-card-inner">
-                    <div class="flip-card-front image">
-                      <img src="./assets/images/404.png" alt="right guess">
-                    </div>
-                    <div class="flip-card-back image">
-                      <img src="./assets/images/logo-filled.png" alt="right guess">
-                    </div>
-                  </div>
+                <div
+                  :class="{
+                    'image animate__animated':true,
+                    'animate__tada':tada,
+                    'animate__pulse animate__slow':!tada
+                  }"
+                  :style="{'animation-iteration-count': !tada || 'infinite'}"
+                  >
+                  <img :src="`./assets/images/${mode}/${current}.jpg`" alt="right guess">
                 </div>
               </div>
 
@@ -203,8 +92,8 @@
       </div>
       <!-- Hero footer: will stick at the bottom -->
       <div class="hero-foot" style="z-index: 2">
-        <div v-if="gameplay" class="columns is-marginless" style="justify-content: flex-end">
-          <div class="column is-5">
+        <div v-if="gameplay" class="columns is-marginless is-centered">
+          <div class="column is-7">
             <!-- Main container -->
   <nav class="level box animate__animated animate__fadeInUp animate__faster has-text-centered">
   <!-- Left side -->
@@ -250,9 +139,9 @@
         <h1 class="is-size-2">Benvenuto!</h1>
         <p style="margin-bottom:5px">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         <div class="buttons are-medium">
-          <button class="button is-primary" @click="start('easy')">Facile</button>
-          <button class="button is-warning" @click="start('medium')">Medio</button>
-          <button class="button is-danger" @click="start('hard')">Difficile</button>
+          <button :class="{'button is-primary':true, 'is-loading':!games_loaded}" @click="start('easy')">Facile</button>
+          <button :class="{'button is-warning':true, 'is-loading':!games_loaded}" @click="start('medium')">Medio</button>
+          <button :class="{'button is-danger':true, 'is-loading':!games_loaded}" @click="start('hard')">Difficile</button>
         </div>
       </div>
     </div>
@@ -260,20 +149,3 @@
   </body>
   <script src="./index.js"></script>
 </html>
-
-
-<!--
-1/12
-1/6
-1/4
-1/3
-5/12
-1/2
-7/12
-2/3
-3/4
-5/6
-11/12
-1
-
- -->
