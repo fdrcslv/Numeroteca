@@ -96,3 +96,13 @@ If the question doesn't need a parameter (i.e. is_irrational), just write "is_ir
           "is_made_of_n_digits_equal(2)"
         ]
 ```
+## 3. Superstar Numbers
+
+The special numbers supported are:
+
+* Pi
+* e
+* phi
+* root 2
+
+Also fractions (like 1/2) need a special treatment since their representation is different from their value. The question "contains_digit(2)" for 1/2 is true for its representation, but not for its value.
