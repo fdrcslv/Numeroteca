@@ -83,7 +83,7 @@ To instruct the app to ask a question, just pick a question from the list and wr
 a question needs am additional parameter (i.e. is_multiple_of) the string will be "is_multiple_of(11)".
 If the question doesn't need a parameter (i.e. is_irrational), just write "is_irrational" in the list of questions.
 
-**Example of questions for the number 11**
+### 2.2.1 Example of questions for the number 11
 
 ```
 "current":11,
