@@ -67,7 +67,7 @@
                   :style="{'animation-delay':delay(n)}"
                 >
                   <img :src="get_image(n)" alt="">
-                  <!-- <span style="position:absolute;">{{n}}</span> -->
+                  <span style="position:absolute;">{{n}}</span>
                 </div>
             </div>
             <div v-else class="columns is-centered">
@@ -117,18 +117,27 @@
   <div class="level-right">
 
     <p class="level-item">
-      <a
-      v-if="not_checked"
-      class="button is-fullwidth is-warning"
-      type="button" name="button"
-      @click="check_current()">
-      Mostra Risposta</a>
-      <a
-      v-else="not_checked"
-      class="button is-fullwidth is-danger"
-      type="button" name="button"
-      @click="checks()">
-      Elimina Carte</a>
+      <template v-if="current_numbers.length < 2">
+        <a
+        class="button is-fullwidth is-success"
+        type="button" name="button"
+        @click="start(mode)">
+        Ricomincia</a>
+      </template>
+      <template v-else>
+        <a
+        v-if="not_checked"
+        class="button is-fullwidth is-warning"
+        type="button" name="button"
+        @click="check_current()">
+        Mostra Risposta</a>
+        <a
+        v-else="not_checked"
+        class="button is-fullwidth is-danger"
+        type="button" name="button"
+        @click="checks()">
+        Elimina Carte</a>
+      </template>
     </p>
   </div>
   </nav>

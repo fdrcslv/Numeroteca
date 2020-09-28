@@ -12,6 +12,10 @@ var app = new Vue({
     current_question:0,
     questions:[],
     question_collection:{
+      is_irrational: arg => [[arg], "E' un numero irrazionale?"],
+      is_algebric: arg => [[arg], "E' un numero algebrico?"],
+      is_transcendental: arg => [[arg], "E' un numero trascendente?"],
+      is_fraction  : arg => [[arg], "E' una frazione?"],
       is_odd: arg => [[], "E' un numero dispari?"],
       is_multiple_of: arg => [[arg], `E' multiplo di ${arg}?`],
       contains_digit: arg => [[arg], `Contiene il numero ${arg}?`],
@@ -52,18 +56,43 @@ var app = new Vue({
       '1/2':{
         value: 0.5,
         props: new Set(['fraction']),
+        repr:true,
       }
     },
     tada:true,
     current:false,
     current_numbers:[],
     images_root: "assets/images/",
+    need_repr: new Set(['contains_digit',]),
+    needs_key: new Set(['is_irrational', 'is_algebric', 'is_transcendental', 'is_fraction']),
     check_functions: {
-        is_irrational: function(n):{
-          return 1
+        has_special_prop: function(n, app, prop){
+          if(app.star_numbers[n]){
+            return app.star_numbers[n].props.has(prop)
+          } else {
+            return false
+          }
+        },
+        is_irrational: function(n){
+          return this.app.check_functions.has_special_prop(n, this.app, 'irrational')
+        },
+        is_algebric: function(n){
+          return this.app.check_functions.has_special_prop(n, this.app, 'algebric')
+        },
+        is_transcendental: function(n){
+          return this.app.check_functions.has_special_prop(n, this.app, 'transcendental')
+        },
+        is_fraction: function(n){
+          return this.app.check_functions.has_special_prop(n, this.app, 'fraction')
         },
         is_odd: function(n){
-          return n % 2 != 0
+          console.log(n);
+          console.log((n - Math.floor(n)) == 0);
+          if((n - Math.floor(n)) == 0){
+            return n % 2 != 0
+          } else {
+            return false
+          }
         },
         is_multiple_of: function(n, d){
           return n % d == 0
@@ -191,14 +220,32 @@ var app = new Vue({
         var type = this.active_questions[this.current_question][0]
         var args = this.active_questions[this.current_question][1]
         var func = this.check_functions[type]
-        this.passes_test = func(...[this.current].concat(args))
-        const 
+        var root = this;
+        function filter_function(el, args){
+          var temp_el = el;
+          console.log(el);
+          if(root.star_numbers[el]){
+            if(root.need_repr.has(type)){
+              console.log(type, el);
+              temp_el = (root.star_numbers[el].repr ? el :  root.star_numbers[el].value)
+              console.log(temp_el);
+            } else if(root.needs_key.has(type)){
+              temp_el = el
+            } else {
+              temp_el = root.star_numbers[el].value
+            }
+          }
+          return func(...[temp_el].concat(args))
+        }
+
+        this.passes_test = filter_function(this.current, args)
+
         if(this.passes_test){
-          this.eliminated = new Set(this.current_numbers.filter(el => !func(...[el].concat(args))));
+          this.eliminated = new Set(this.current_numbers.filter(el => !filter_function(el, args)));
           this.answer = this.passes_test
         } else {
-          this.eliminated = new Set(this.current_numbers.filter(el => func(...[el].concat(args))));
-          this.answer = this.passes_test
+          this.eliminated = new Set(this.current_numbers.filter(el => filter_function(el, args)));
+          this.answer = this.passes_test;
         }
     },
     checks: function(){
@@ -207,11 +254,23 @@ var app = new Vue({
       var func = this.check_functions[type]
       this.is_eliminating = true;
       var root = this;
+      function filter_function(el, args){
+        var temp_el = el;
+        if(root.star_numbers[el]){
+          if(root.need_repr.has(type)){
+            temp_el = (root.star_numbers[el].repr ? el :  root.star_numbers[el].value)
+          } else {
+            temp_el = root.star_numbers[el].value
+          }
+        }
+        return func(...[temp_el].concat(args))
+      }
+
       window.setTimeout(function () {
         if(root.passes_test){
-          root.current_numbers = root.current_numbers.filter(el => func(...[el].concat(args)));
+          root.current_numbers = root.current_numbers.filter(el => filter_function(el, args));
         } else {
-          root.current_numbers = root.current_numbers.filter(el => !func(...[el].concat(args)));
+          root.current_numbers = root.current_numbers.filter(el => !filter_function(el, args));
         }
         root.not_checked = true;
         root.current_question = root.current_question+1
@@ -222,7 +281,7 @@ var app = new Vue({
     get_image: function(n){
       return this.images_root +
       `${this.mode}/` +
-      n.toString().replace('.','') +
+      n.toString().replace('.','').replace('/', 'su') +
       '.jpg'
     },
     delay: function(n){
