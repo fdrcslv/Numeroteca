@@ -51,9 +51,9 @@ The structure of the json is this:
 }
 
 ```
-## Qustions
+## 2. Qustions
 
-### Supported Questions
+### 2.1 Supported Questions
 These are the currentlòy suported questions, for integers, decimal, fractions, and "superstar" numbers like Pi etc.
 
 * is_irrational()
@@ -78,7 +78,7 @@ These are the currentlòy suported questions, for integers, decimal, fractions, 
 * is_binary()
 * is_made_of_n_digits_equal(n)
 
-### Question formatting in games.json
+### 2.2 Question formatting in games.json
 To instruct the app to ask a question, just pick a question from the list and write it in the ```questions``` list parameter of the game. If
 a question needs am additional parameter (i.e. is_multiple_of) the string will be "is_multiple_of(11)".
 If the question doesn't need a parameter (i.e. is_irrational), just write "is_irrational" in the list of questions.
