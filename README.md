@@ -51,7 +51,7 @@ The structure of the json is this:
 }
 
 ```
-## 2. Qustions
+## 2. Questions
 
 ### 2.1 Supported Questions
 These are the currentlòy suported questions, for integers, decimal, fractions, and "superstar" numbers like Pi etc.
@@ -112,7 +112,7 @@ The special numbers supported are:
 Also fractions (like 1/2) need a special treatment since their representation is different from their value. The question "contains_digit(2)" for 1/2 is true for its representation, but not for its value.
 
 ## 4. Images
-File names for the number cards are the same as the number thei represent: 1.jpg for the number 1 and pi.jpg for Pi.
+File names for the number cards are the same as the number they represent: 1.jpg for the number 1 and pi.jpg for Pi.
 
 In some cases we follow two simple rules of substitution:
 
