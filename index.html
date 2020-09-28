@@ -88,10 +88,18 @@
           <div class="column is-12">
             <div v-for="i in Array.from(Array(3).keys())" class="columns">
               <div v-for="j in Array.from({length: 10}, (_, i) => i + 1)" class="column" :style="{'transition': 'all ease 0.5s', 'transform': get_translation(j, i)}">
-                <img @click="translating=!translating" class="num num-has-shadow":src="get_image(j)" alt="">
+                <img @click="translating=!translating; pick()" class="num num-has-shadow":src="get_image(j)" alt="">
+              </div>
+            </div>
+            <div class="columns is-centered is-marginless">
+              <div class="column is-7 has-text-centered">
+                  <button v-if="translating && !picked" type="button" name="button" class="button is-large">Clicca sul mazzo!</button>
+                  <button v-if="!translating && !picked" type="button" name="button" class="button is-large">Tocca una carta!</button>
+                  <button v-else-if="translating && picked" type="button" name="button" class="button is-primary is-large" @click="toggle_phase('gameplay')">Iniziamo!</button>
               </div>
             </div>
           </div>
+
         </div>
       </div>
       <div v-if="phases.gameplay" class="hero-body">
@@ -135,8 +143,6 @@
             </div>
           </div>
         </div>
-      </div>
-      <div v-else class="hero-body" style="z-index: 2">
       </div>
       <!-- Hero footer: will stick at the bottom -->
       <div class="hero-foot" style="z-index: 2">

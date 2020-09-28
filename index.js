@@ -9,6 +9,8 @@ var app = new Vue({
       gameplay: false,
     },
     is_eliminating:false,
+    picked:false,
+    _pick: 0,
     mode:false,
     answer:false,
     eliminated:new Set(),
@@ -198,8 +200,10 @@ var app = new Vue({
   },
   methods:{
     toggle_phase: function(phase){
+      console.log(phase,   this.phases[phase]);
       Object.keys(this.phases).forEach(v => this.phases[v] = false);
       this.phases[phase] = true;
+      console.log(  this.phases[phase]);
     },
     get_z_index:function(){
       return Math.floor(Math.random()*10);
@@ -210,6 +214,13 @@ var app = new Vue({
       } else {
         return `translate(${-100*(i-1)+450}%,${-j*100+100+i}%) scale(3)`
       }
+    },
+    pick: function(){
+      if(!this.translating){return};
+      this.picked = true;
+      this._pick  = Math.floor(Math.random() * this.games[this.mode].games.length)
+      this.questions = this.games[this.mode].games[this._pick].questions;
+      this.current = this.games[this.mode].games[this._pick].current;
     },
     start: function(mode){
       this.toggle_phase('chosing_for_you')
@@ -222,10 +233,7 @@ var app = new Vue({
       this.not_checked= true;
       this.current_question=0;
       this.not_checked = true;
-      var pick  = Math.floor(Math.random() * this.games[this.mode].games.length)
-      this.questions = this.games[this.mode].games[pick].questions;
       this.current_numbers = JSON.parse(JSON.stringify(this.games[this.mode].numbers));
-      this.current = this.games[this.mode].games[pick].current;
       // this.shuffle_array(this.current_numbers)
       this.current_question = 0
     },
