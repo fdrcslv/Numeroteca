@@ -19,18 +19,36 @@ Every game level has a set of numbers to choose from.
 
 The structure of the json is this:
 
-‘’’’
+```
 {
-    easy:{
-        numbers:[2,3,’rad2’,1024,’pi’...],
-        games:[
-            {
-                current:11,
-                questions:[‘is_odd’,’is_miltiple_of(5)...],
-            },{
-                current:6,
-                questions:[],
-            }
-    }
+  easy:{
+    numbers:[2,3,"rad2",1024,"pi"...],
+    games:[
+      {
+        current:11,
+        questions:["is_odd","is_miltiple_of(5)"...]
+      },
+      {
+        current:6,
+        questions:[...]
+      }
+      {
+        current: 9,
+        questions:[...]
+      }
+    ]
+  },
+  meedium:{
+    numbers:[...],
+    games:[
 
-‘’’‘
+    ]
+  },
+  hard:{
+    numbers:[...],
+    games:[...]
+  }
+}
+
+```
+
