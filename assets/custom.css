@@ -74,3 +74,30 @@
   grid-gap:10px;
   grid-template-columns: auto auto auto auto auto auto auto auto auto auto;
 }
+
+.question-picker-open{
+    position: absolute;
+    width: 800px;
+    margin: 25vh calc(50% - 400px);
+    z-index: 100;
+    border: #7777776b 1px solid;
+    transition: all 0.5s ease;
+}
+
+.question-picker-down{
+  position: absolute;
+width: 100%;
+margin: calc(100vh - 120px) 0 0 0;
+z-index: 100;
+border: #7777776b 1px solid;
+height: 100px;
+/* bottom: 0; */
+transition: all 0.5s ease;
+}
+
+
+
+.questions-container{
+    display: grid;
+    grid-gap: 5px;
+}

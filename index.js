@@ -11,6 +11,7 @@ var app = new Vue({
     is_eliminating:false,
     card_picked:false,
     picked:false,
+    has_picked_question:false,
     _pick: 0,
     mode:false,
     answer:false,
@@ -22,6 +23,9 @@ var app = new Vue({
       info_selection:false,
     },
     not_checked: true,
+    picked_question: false,
+    qst_container_class:'question-picker-open',
+    display_qst:false,
     question_list:[],
     current_question:0,
     questions:[],
@@ -200,6 +204,13 @@ var app = new Vue({
    xhttp.send()
   },
   methods:{
+    _display_qst:function(){
+      var root = this;
+      window.setTimeout(function(){
+        root.has_picked_question = true;
+        root.qst_container_class =  'question-picker-down';
+      },1000)
+    },
     toggle_phase: function(phase){
       console.log(phase,   this.phases[phase]);
       Object.keys(this.phases).forEach(v => this.phases[v] = false);
@@ -376,6 +387,10 @@ var app = new Vue({
     }
   },
   computed:{
+    get_qst_grid:function(){
+      const get_cols = cols => Array(cols).fill('auto').join(' ')
+      return get_cols(this.active_questions.length)
+    },
     get_grid: function(){
       if(!this.current_numbers) return 'auto';
       var len = this.current_numbers.length;
