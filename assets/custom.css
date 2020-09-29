@@ -14,7 +14,7 @@
 }
 
 .num-has-shadow:hover {
-  transform: scale(1.01);
+  transform: scale(1.05);
   box-shadow: 0 14px 16px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 .hero.has-background {
@@ -35,16 +35,16 @@
   animation-duration:100ms
 }
 .glow{
-  box-shadow: 0 0 10px 2px #f14668, 0 0 0 3px #f14668
+  box-shadow: 0 0 10px 2px #f14668, 0 0 0 4px #f14668
 }
 .glow:hover{
-  box-shadow: 0 0 10px 5px #f14668, 0 0 1px 3px #f14668
+  box-shadow: 0 0 10px 5px #f14668, 0 0 1px 4px #f14668
 }
 .glow-right{
-  box-shadow: 0 0 10px 2px #00d1b2, 0 0 0 3px #00d1b2
+  box-shadow: 0 0 10px 2px #00d1b2, 0 0 0 4px #00d1b2
 }
 .glow-right:hover{
-  box-shadow: 0 0 10px 5px #00d1b2, 0 0 1px 3px #00d1b2
+  box-shadow: 0 0 10px 5px #00d1b2, 0 0 1px 4px #00d1b2
 }
 
 .num:hover .num-info {

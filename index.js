@@ -2,13 +2,14 @@ var app = new Vue({
   el:'#app',
   data:{
     animate_cards:false,
-    translating:true,
+    closed_deck:true,
     phases:{
       welcome:true,
       chosing_for_you:false,
       gameplay: false,
     },
     is_eliminating:false,
+    card_picked:false,
     picked:false,
     _pick: 0,
     mode:false,
@@ -209,18 +210,37 @@ var app = new Vue({
       return Math.floor(Math.random()*10);
     },
     get_translation: function(i, j){
-      if (!this.translating){
-        return 'translate(0,0)'
+      if (!this.closed_deck && this.picked){
+        return {
+          'transform':'translate(0,0)',
+          'transition-delay':'1s',
+          'transition': 'all ease 0.5s',
+        }
+      } else if (!this.closed_deck && !this.picked){
+        return {
+          'transform':'translate(0,0)',
+          'transition': 'all ease 0.5s',
+        }
       } else {
-        return `translate(${-100*(i-1)+450}%,${-j*100+100+i}%) scale(3)`
+        return {
+          'transform':`translate(${-100*(i-1)+450}%,${-j*100+100+i}%) scale(3)`,
+          'transition-delay':'1s',
+          'transition': 'all ease 0.5s',
+        }
       }
     },
-    pick: function(){
-      if(!this.translating){return};
-      this.picked = true;
-      this._pick  = Math.floor(Math.random() * this.games[this.mode].games.length)
-      this.questions = this.games[this.mode].games[this._pick].questions;
-      this.current = this.games[this.mode].games[this._pick].current;
+    pick: function(i,j){
+      if(!this.closed_deck){
+        this.picked = false;
+      } else {
+        this.picked = true;
+        this._pick  = Math.floor(Math.random() * this.games[this.mode].games.length)
+        console.log(this._pick);
+        this.questions = this.games[this.mode].games[this._pick].questions;
+        this.current = this.games[this.mode].games[this._pick].current;
+        this.card_picked = `${i}${j}`
+      }
+
     },
     start: function(mode){
       this.toggle_phase('chosing_for_you')
@@ -362,8 +382,10 @@ var app = new Vue({
       const get_cols = cols => Array(cols).fill('auto').join(' ')
       if(len > 16 ){
         return get_cols(10)
-      } else if (len > 4){
+      } else if (len > 7){
         return get_cols(8)
+      } else if (len > 4){
+        return get_cols(6)
       } else if (len > 1){
         return get_cols(4)
       } else {

@@ -87,15 +87,15 @@
         <div class="columns is-centered">
           <div class="column is-12">
             <div v-for="i in Array.from(Array(3).keys())" class="columns">
-              <div v-for="j in Array.from({length: 10}, (_, i) => i + 1)" class="column" :style="{'transition': 'all ease 0.5s', 'transform': get_translation(j, i)}">
-                <img @click="translating=!translating; pick()" class="num num-has-shadow"src="./assets/images/back/0.png" alt="">
+              <div v-for="j in Array.from({length: 10}, (_, i) => i + 1)" class="column" :style="get_translation(j,i)">
+                <img @click="closed_deck=!closed_deck; pick(i, j)" :class="{'num num-has-shadow': true, 'animate__animated animate__bounce glow-right': card_picked == `${i}${j}`}"src="./assets/images/back/0.png" alt="">
               </div>
             </div>
             <div class="columns is-centered is-marginless">
               <div class="column is-7 has-text-centered">
-                  <button v-if="translating && !picked" type="button" name="button" class="button is-large">Clicca sul mazzo!</button>
-                  <button v-if="!translating && !picked" type="button" name="button" class="button is-large">Tocca una carta!</button>
-                  <button v-else-if="translating && picked" type="button" name="button" class="button is-primary is-large" @click="toggle_phase('gameplay')">Iniziamo!</button>
+                  <button v-if="closed_deck && !picked" type="button" name="button" class="button is-large">Clicca sul mazzo!</button>
+                  <button v-if="!closed_deck && !picked" type="button" name="button" class="button is-large">Tocca una carta!</button>
+                  <button v-else-if="closed_deck && picked" type="button" name="button" class="button is-primary is-large" @click="toggle_phase('gameplay')">Iniziamo!</button>
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@
                   :class="{
                     'image num num-has-shadow animate__animated filler':true,
                     'animate__fadeIn':animate_cards,
-                    'glow animate__bounce animate__faster':fake_eliminated.has(n),
+                    'glow animate__bounce':fake_eliminated.has(n),
                     'glow-right':!not_checked && is_eliminating && !eliminated.has(n),
                     'glow animate__flipOutX animate__fast': is_eliminating && eliminated.has(n)
                   }"
