@@ -208,6 +208,7 @@ var app = new Vue({
       var root = this;
       window.setTimeout(function(){
         root.has_picked_question = true;
+        root.display_qst = true;
         root.qst_container_class =  'question-picker-down';
       },1000)
     },

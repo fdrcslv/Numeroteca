@@ -16,15 +16,7 @@
       <!-- number info modal  -->
       <div v-if="phases.gameplay" class="is-overlay" >
         <div :class="['box has-text-centered', qst_container_class]">
-          <p>Scegli una carta domanda</p>
-          <div :class="{'questions-container':true, 'animate__animated animate__fadeOut':has_picked_question}" :style="{'grid-template-columns':get_qst_grid}"  style="transition: all 0.5s ease;">
-            <div v-for= "n in active_questions" @click="picked_question=n; _display_qst()">
-              <div :class="{'image num num-has-shadow':true, 'animate__animated animate__zoomOut':picked_question==n}">
-                <img src="./assets/images/back/0.png" alt="">
-              </div>
-            </div>
-          </div>
-          <nav v-if="display_qst" class="level">
+          <nav v-if="has_picked_question" class="level">
           <!-- Left side -->
           <div class="level-left">
             <div class="level-item">
@@ -70,6 +62,14 @@
             </p>
           </div>
           </nav>
+          <p v-if="!has_picked_question">Scegli una carta domanda</p>
+          <div :class="{'questions-container':true, 'animate__animated animate__fadeOut':has_picked_question}" :style="{'grid-template-columns':get_qst_grid}"  style="transition: all 0.5s ease;">
+            <div v-for= "n in active_questions" @click="picked_question=n; _display_qst()">
+              <div :class="{'image num num-has-shadow':true, 'animate__animated animate__zoomOut':picked_question==n}">
+                <img src="./assets/images/back/0.png" alt="">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div @click="get_info()" :class="{'modal':true, 'is-active':info.number_info}">
