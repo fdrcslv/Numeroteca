@@ -86,8 +86,8 @@
 
 .question-picker-down{
   position: absolute;
-width: 100%;
-margin: calc(100vh - 120px) 0 0 0;
+width: 90%;
+margin: calc(100vh - 120px) 0 0 5%;
 z-index: 100;
 border: #7777776b 1px solid;
 height: 100px;
