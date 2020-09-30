@@ -1,4 +1,4 @@
-name: Clone repository
+name: Pull repository
 
 on: [push]
 
@@ -14,6 +14,6 @@ jobs:
       with:
         host: github.com
         private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    - name: Clone repository
-      run: git clone git@github.com:fspegni/Numeroteca.git
+    - name: Pull repository
+      run: git pull 
       working-directory: ${{ WORKING_DIRECTORY }}
