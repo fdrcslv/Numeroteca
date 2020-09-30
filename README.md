@@ -57,7 +57,8 @@ The structure of the json is this:
 
 ### 2.1 Supported Questions
 These are the currentlòy suported questions, for integers, decimal, fractions, and "superstar" numbers like Pi etc.
-
+* is_periodic(n)
+* is_phisical_constant()
 * is_irrational()
 * is_algebric()
 * is_transcendental()
@@ -79,6 +80,12 @@ These are the currentlòy suported questions, for integers, decimal, fractions, 
 * is_decimal()
 * is_binary()
 * is_made_of_n_digits_equal(n)
+* is_result_from_expression(n, expression)
+* its_modulus_is_lesser_than(n, x)
+* is_natural_and_even: function(n)
+* is_natural_and_odd(n)
+* is_made_of_n_significant_digits(n, d)
+* is_even_and_multiple_of(n, m)
 
 ### 2.2 Question formatting in games.json
 To instruct the app to ask a question, just pick a question from the list and write it in the ```questions``` list parameter of the game. If
