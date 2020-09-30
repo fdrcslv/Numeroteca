@@ -6,6 +6,8 @@ jobs:
   clone:
     name: Clone
     runs-on: ubuntu-latest
+    env: 
+      WORKING_DIRECTORY: /home/webmaster/git/Numeroteca
     steps:
     - name: Setup SSH
       uses: MrSquaare/ssh-setup-action@v1
@@ -14,3 +16,4 @@ jobs:
         private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: Clone repository
       run: git clone git@github.com:fspegni/Numeroteca.git
+      working-directory: ${{ WORKING_DIRECTORY }}
