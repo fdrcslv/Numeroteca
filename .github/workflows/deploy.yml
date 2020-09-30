@@ -14,7 +14,9 @@ jobs:
     - name: Setup SSH
       uses: garygrossgarten/github-action-ssh@release
       with:
-        command: ls -a
+        command: |
+          cd ${{ env.REMOTE_DIR }}
+          git pull
         host: ${{ env.REMOTE_HOST }}
         username: ${{ env.REMOTE_USER }}
         privateKey: ${{ secrets.SSH_PRIVATE_KEY}}
