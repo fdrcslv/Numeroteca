@@ -17,4 +17,4 @@ jobs:
         command: ls -a
         host: ${{ env.REMOTE_HOST }}
         username: ${{ env.REMOTE_USER }}
-        privateKey: ${{ secrets.PRIVATE_KEY}}
+        privateKey: ${{ secrets.SSH_PRIVATE_KEY}}
