@@ -30,27 +30,37 @@ var app = new Vue({
     current_question:0,
     questions:[],
     question_collection:{
-      is_irrational: arg => [[arg], "E' un numero irrazionale?"],
-      is_algebric: arg => [[arg], "E' un numero algebrico?"],
-      is_transcendental: arg => [[arg], "E' un numero trascendente?"],
-      is_fraction  : arg => [[arg], "E' una frazione?"],
+      is_natural: arg => [[], "E' un numero naturale?"],
+      is_real : arg => [[], "E' un numero reale?"],
+      is_periodic: arg => [[], "E' un numero periodico?"],
+      is_phisical_constant: arg => [[], "E' una costante fisica?"],
+      is_irrational: arg => [[], "E' un numero irrazionale?"],
+      is_algebric: arg => [[], "E' un numero algebrico?"],
+      is_transcendental: arg => [[], "E' un numero trascendente?"],
+      is_fraction  : arg => [[], "E' una frazione?"],
       is_odd: arg => [[], "E' un numero dispari?"],
       is_multiple_of: arg => [[arg], `E' multiplo di ${arg}?`],
       contains_digit: arg => [[arg], `Contiene il numero ${arg}?`],
-      has_length: arg => [[arg], `Ha una lunghezza di ${arg} cifre?`],
-      has_length_or_more: arg => [[arg], `Ha una lunghezza di ${arg} cifre o più?`],
+      has_length: arg => [[arg], `Ha una lunghezza di ${arg} cifr${arg==1 ? 'a':'e'}?`],
+      has_length_or_more: arg => [[arg], `Ha una lunghezza di ${arg} cifr${arg==1 ? 'a':'e'} o più?`],
       has_sign: arg => [[arg], `Ha segno ${arg.toString().split('')[0]} ?`],
       is_integer: arg => [[], "E' un numero intero?"],
       is_palindrome: arg => [[], "E' un numero palindromo?"],
       is_lesser_than: arg => [[arg], `E' un numero minore di ${arg}?`],
-      is_platonic: arg => [[], "E' un numero platonico?"],
+      is_platonic: arg => [[], "E' un numero corrispondente alle facce dei solidi platonici?"],
       is_perfect: arg => [[], "E' un numero perfetto?"],
       is_power_of: arg => [[arg], `E' una potenza di ${arg}?`],
       is_fibonacci: arg => [[], "E' un numero della serie di Fibonacci?"],
       is_prime: arg => [[], "E' un numero primo?"],
       is_decimal: arg => [[], "E' un numero decimale?"],
       is_binary: arg => [[], "E' un numero binario?"],
-      is_made_of_n_digits_equal: arg => [[arg], `E' composto da ${arg} cifre uguali?`]
+      is_made_of_n_digits_equal: arg => [[arg], `E' composto da ${arg} cifre uguali?`],
+      is_result_from_expression: arg => [[arg], `E' il risultato della seguente espressione ${arg} ? `],
+      its_modulus_is_lesser_than: arg =>[[arg] `Il suo modulo è minore di ${arg}`],
+      is_natural_and_even: arg =>[[], "E' un numero naturale dispari?"],
+      is_natural_and_odd: arg =>[[],  "E' un numero naturale pari?"],
+      is_made_of_n_significant_digits: arg => [[arg], `E' composto da ${arg} cifr${arg==1 ? 'a':'e'} significativ${arg==1 ? 'a':'e'}?`],
+      is_even_and_multiple_of: arg => [[arg], `E' un numero pari multiplo di ${arg}?`]
     },
     games:{},
     games_loaded:false,
@@ -71,25 +81,71 @@ var app = new Vue({
         value:(1 + Math.sqrt(5)) / 2,
         props: new Set(['irrational', 'algebric'])
       },
+      c:{
+        value: 299792458,
+        props: new Set(['phisical'])
+      },
+      gb:{
+        value: 1073741824,
+        props: new Set([])
+      },
+      googol:{
+        value: 100000000000000000000,
+        props: new Set([])
+      },
+      '2pow42':{
+        value: 4398046511104,
+        props: new Set([])
+      },
       '1/2':{
         value: 0.5,
         props: new Set(['fraction']),
         repr:true,
-      }
+      },
+      '-1/2':{
+        value:-0.5,
+        props: new Set(['fraction'])
+      },
+      '-0.3p':{
+        value:-1/3,
+        props: new Set(['fraction', 'periodic'])
+      },
+      '2/3':{
+        value:2/3,
+        props: new Set(['fraction', 'periodic'])
+      },
+      '1/3':{
+        value:1/3,
+        props: new Set(['fraction', 'periodic'])
+      },
     },
     tada:true,
     current:false,
     current_numbers:[],
     images_root: "assets/images/",
     need_repr: new Set(['contains_digit',]),
-    needs_key: new Set(['is_irrational', 'is_algebric', 'is_transcendental', 'is_fraction']),
+    needs_key: new Set(['is_irrational', 'is_algebric', 'is_transcendental', 'is_fraction', 'is_phisical_constant']),
     check_functions: {
+        is_natural: function(n){
+          return this.app.check_functions.has_sign(n, 1) || n == 0
+        },
+        is_real: function(){
+          //crazy
+          return true
+        },
         has_special_prop: function(n, app, prop){
           if(app.star_numbers[n]){
             return app.star_numbers[n].props.has(prop)
           } else {
             return false
           }
+        },
+        //verbose, but helps with labels for the questions, and for the games.json standard
+        is_periodic: function(n){
+          return this.app.check_functions.has_special_prop(n, this.app, 'periodic')
+        },
+        is_phisical_constant: function (n){
+          return this.app.check_functions.has_special_prop(n, 'phisical')
         },
         is_irrational: function(n){
           return this.app.check_functions.has_special_prop(n, this.app, 'irrational')
@@ -156,17 +212,17 @@ var app = new Vue({
           const is_perfectsquare = x => Math.sqrt(x) * Math.sqrt(x) == x
           return is_perfectsquare(5*n*n + 4) || is_perfectsquare(5*n*n - 4)
         },
-        is_prime: function(num){
-          for(let i = 2, s = Math.sqrt(num); i <= s; i++){
-            if(num % i === 0) return false
+        is_prime: function(n){
+          for(let i = 2, s = Math.sqrt(n); i <= s; i++){
+            if(n % i === 0) return false
           }
-          return num > 1;
+          return n > 1;
         },
         is_decimal: function(n){
           if (n.fraction){
             return false
           } else {
-            return this.check_functions.is_integer(n)
+            return this.app.check_functions.is_integer(n)
           }
         },
         is_binary:  function (n){
@@ -174,19 +230,41 @@ var app = new Vue({
           var n_set = new Set(nlist)
           if(n_set.size > 2){
             return false
-          } else if (n_set.has(1) && n_set.has(0)) {
+          } else if (n_set.has(1) || n_set.has(0)) {
             return true
           } else {
             return false
           }
         },
-        is_made_of_n_digits_equal: function(num, n){
-          if(num.toString().length != n){
+        is_made_of_n_digits_equal: function(n, x){
+          if(n.toString().length != x){
             return false
           } else {
-            var digits = num.toString().split("")
+            var digits = n.toString().split("")
             return digits.every(d => d == digits[0])
           }
+        },
+        is_result_from_expression: function(n, expression){
+          //eval is evil I know
+          return n == eval(expression);
+        },
+        its_modulus_is_lesser_than: function(n, x){
+          return this.app.check_functions.is_lesser_than(Math.abs(n), x)
+        },
+        is_natural_and_even: function(n){
+          var chf = this.app.check_functions;
+          return chf.is_natural(n) && chf.is_multiple_of(n, 2)
+        },
+        is_natural_and_odd: function(n){
+          var chf = this.app.check_functions;
+          return chf.is_natural(n) && chf.is_odd()
+        },
+        is_made_of_n_significant_digits: function(n, d){
+          return n.toString().split('.')[0].length == d
+        },
+        is_even_and_multiple_of: function(n, m){
+          var chf = this.app.check_functions;
+          return chf.is_multiple_of(n, m) && chf.is_multiple_of(n, 2)
         }
       }
   },
@@ -247,6 +325,7 @@ var app = new Vue({
       } else {
         this.picked = true;
         this._pick  = Math.floor(Math.random() * this.games[this.mode].games.length)
+        this._pick = 2
         console.log(this._pick);
         this.questions = this.games[this.mode].games[this._pick].questions;
         this.current = this.games[this.mode].games[this._pick].current;
@@ -414,15 +493,24 @@ var app = new Vue({
       }
       var questions = [];
       var regExp = /\(([^)]+)\)/;
+      var safe_expression = /([^0-9*/+().<>=-])/;
       for (let k in this.questions){
-        var qst = this.questions[k]
+        var qst = this.questions[k];
+        var func = qst.split("(")[0];
         var arg;
-        try {
-          arg = regExp.exec(qst)[1];
-        } catch (e) {
-          arg = null
+
+        if(func == 'is_result_from_expression'){
+          arg = qst.slice(qst.indexOf('(')+1, qst.lastIndexOf(')'))
+          if(! safe_expression.exec(arg)){
+              console.error('The expression can only contain numbers and mathematical operators */+().<>=-')
+          }
+        } else {
+          try {
+            arg = regExp.exec(qst)[1];
+          } catch (e) {
+            arg = null
+          }
         }
-        var func = qst.split("(")[0]
         questions.push([func].concat(this.question_collection[func](arg)))
       }
       return questions

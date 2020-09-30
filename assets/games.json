@@ -12,17 +12,39 @@
           "has_length(2)",
           "is_made_of_n_digits_equal(2)"
         ]
+      },
+      {
+        "current":3,
+        "questions":[
+          "is_multiple_of(5)",
+          "contains_digit(1)",
+          "is_odd",
+          "has_length(1)",
+          "is_multiple_of(3)",
+          "is_result_from_expression(((5+3)*2 -10)/2)"
+        ]
+      },
+      {
+        "current":27,
+        "questions":[
+          "is_even_and_multiple_of(3)",
+          "contains_digit(3)",
+          "is_multiple_of(2)",
+          "has_length(2)",
+          "contains_digit(1)",
+          "is_multiple_of(3)"
+        ]
       }
     ]
   },
   "medium":{
-    "numbers":[],
+    "numbers":[-10,-1,"-1/2","-0.3p",0,"2/3",1,1,5,2,3,3,14,"pi",4,5,6,7,8,9,10,12,15,17,20,22,50,100,1000,1991,2020,2021],
     "games":[
 
     ]
   },
   "hard":{
-    "numbers":[],
+    "numbers":[-10,-1,0,0.3,"1/3",1,"root2","phi",2,"e",3,"pi",4,5,6,8,10,12,13,20,21,28,100,496,2020,8128,"c","gb",242,"googol"],
     "games":[]
   }
 }
