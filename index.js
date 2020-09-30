@@ -1,5 +1,4 @@
 
-//V 2.1
 var app = new Vue({
   el:'#app',
   data:{
