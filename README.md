@@ -110,14 +110,21 @@ The special numbers supported are:
 * e
 * phi
 * root2
+* googol
+* c
+* GB
 
 Also fractions (like 1/2) need a special treatment since their representation is different from their value. The question "contains_digit(2)" for 1/2 is true for its representation, but not for its value.
 
 ## 4. Images
 File names for the number cards are the same as the number they represent: 1.jpg for the number 1 and pi.jpg for Pi.
 
-In some cases we follow two simple rules of substitution:
+In some cases we follow rules of substitution:
 
 Numbers like 0.4 map to a filename like 04.jpeg
+
+Numbers like 0.33333333... map to 03p.jpeg
+
+Powers like 2^42 map to 2pow42.jpeg 
 
 Numbers like 1/2 map to a filename formatted as 1over2.jpeg
