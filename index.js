@@ -160,8 +160,6 @@ var app = new Vue({
           return this.app.check_functions.has_special_prop(n, this.app, 'fraction')
         },
         is_odd: function(n){
-          console.log(n);
-          console.log((n - Math.floor(n)) == 0);
           if((n - Math.floor(n)) == 0){
             return n % 2 != 0
           } else {
@@ -291,10 +289,8 @@ var app = new Vue({
       },1000)
     },
     toggle_phase: function(phase){
-      console.log(phase,   this.phases[phase]);
       Object.keys(this.phases).forEach(v => this.phases[v] = false);
       this.phases[phase] = true;
-      console.log(  this.phases[phase]);
     },
     get_z_index:function(){
       return Math.floor(Math.random()*10);
@@ -325,8 +321,6 @@ var app = new Vue({
       } else {
         this.picked = true;
         this._pick  = Math.floor(Math.random() * this.games[this.mode].games.length)
-        this._pick = 2
-        console.log(this._pick);
         this.questions = this.games[this.mode].games[this._pick].questions;
         this.current = this.games[this.mode].games[this._pick].current;
         this.card_picked = `${i}${j}`
@@ -361,7 +355,6 @@ var app = new Vue({
         }
     },
     toggle_fake_eliminated: function(n){
-      console.log(n);
       if(this.fake_eliminated.has(n)){
         this.fake_eliminated.delete(n)
       } else {
@@ -377,12 +370,9 @@ var app = new Vue({
         var root = this;
         function filter_function(el, args){
           var temp_el = el;
-          console.log(el);
           if(root.star_numbers[el]){
             if(root.need_repr.has(type)){
-              console.log(type, el);
               temp_el = (root.star_numbers[el].repr ? el :  root.star_numbers[el].value)
-              console.log(temp_el);
             } else if(root.needs_key.has(type)){
               temp_el = el
             } else {
@@ -452,7 +442,6 @@ var app = new Vue({
       }
     },
     get_info: function(n){
-      console.log(this.info.number_info);
       if(n){
         this.info.info_selection = n;
         this.info.number_info = !this.info.number_info;
