@@ -7,13 +7,14 @@ jobs:
     name: Clone
     runs-on: ubuntu-latest
     env: 
-      WORKING_DIRECTORY: /home/webmaster/git/Numeroteca
+      REMOTE_DIR: /home/webmaster/git/Numeroteca
+      REMOTE_USER: webmaster
+      REMOTE_HOST: prenotazioni.fosforoscienza.it
     steps:
     - name: Setup SSH
-      uses: MrSquaare/ssh-setup-action@v1
+      uses: garygrossgarten/github-action-ssh@release
       with:
-        host: github.com
-        private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    - name: Pull repository
-      run: git pull 
-      working-directory: ${{ env.WORKING_DIRECTORY }}
+        command: ls -a
+        host: ${{ env.REMOTE_HOST }}
+        username: ${{ env.REMOTE_USER }}
+        privateKey: ${{ secrets.PRIVATE_KEY}}
