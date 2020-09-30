@@ -146,7 +146,7 @@ var app = new Vue({
           return this.app.check_functions.has_special_prop(n, this.app, 'periodic')
         },
         is_phisical_constant: function (n){
-          return this.app.check_functions.has_special_prop(n, 'phisical')
+          return this.app.check_functions.has_special_prop(n, this.app, 'phisical')
         },
         is_irrational: function(n){
           return this.app.check_functions.has_special_prop(n, this.app, 'irrational')
@@ -245,7 +245,14 @@ var app = new Vue({
         },
         is_result_from_expression: function(n, expression){
           //eval is evil I know
-          return n == eval(expression);
+          try {
+            var res = (n == eval(expression));
+          } catch (e) {
+            console.error('the expression is invalid')
+            res = false;
+          } finally {
+            return res;
+          }
         },
         its_modulus_is_lesser_than: function(n, x){
           return this.app.check_functions.is_lesser_than(Math.abs(n), x)
@@ -321,7 +328,7 @@ var app = new Vue({
         this.picked = false;
       } else {
         this.picked = true;
-        this._pick  = Math.floor(Math.random() * this.games[this.mode].games.length)
+        this._pick  = Math.floor(Math.random() * this.games[this.mode].games.length);
         this.questions = this.games[this.mode].games[this._pick].questions;
         this.current = this.games[this.mode].games[this._pick].current;
         this.card_picked = `${i}${j}`
@@ -426,8 +433,10 @@ var app = new Vue({
     get_image: function(n){
       return this.images_root +
       `${this.mode}/` +
-      n.toString().replace('.','').replace('/', 'over') +
-      '.jpg'
+      n.toString()
+        .replace('.','')
+        .replace('/', 'over') +
+      '.png'
     },
     delay: function(n){
       if(this.is_eliminating){
