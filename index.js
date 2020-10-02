@@ -322,7 +322,7 @@ var app = new Vue({
        }
      };
 
-   xhttp.open("GET", "assets/games.json?v=2.5", true);
+   xhttp.open("GET", "assets/games.json?v=2.6", true);
    xhttp.send()
   },
   methods:{

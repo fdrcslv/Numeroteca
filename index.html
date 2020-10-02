@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.0/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
-    <link rel="stylesheet" href="./assets/custom.css?v=2.5">
+    <link rel="stylesheet" href="./assets/custom.css?v=2.6">
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500&display=swap" rel="stylesheet">
   </head>
   <body style="font-family: 'Rubik', sans-serif;">
@@ -66,7 +66,7 @@
               <div :class="{'questions-container':true, 'animate__animated animate__fadeOut':question_deck.picked}" :style="{'grid-template-columns':get_qst_grid}"  style="transition: all 0.5s ease;">
                 <div v-for= "n in this.question_deck.card_list" @click="pick_question(n);">
                   <div :class="{'image num num-has-shadow':true, 'animate__animated animate__zoomOut':question_deck.card_picked==n}">
-                    <img class="qst-image" src="./assets/images/back/0.png" :style={height:qst_height} alt="">
+                    <img class="qst-image" src="./assets/images/back/question.png" :style={height:qst_height} alt="">
                     <span style="position:absolute; left: calc(50% - 0.5em);">{{n}}</span>
                   </div>
                 </div>
@@ -244,10 +244,7 @@
           <div class="animate__animated animate__fadeInUp animate__delay-300ms">
                 <div class="tabs is-centered" style="width:60%; margin:auto;">
                   <ul style="width:50%">
-                    <li style="width:25%; padding:10px;"><div class="image animate__animated animate__fadeIn animate__slower "><img src="./assets/images/logos/bgs.png" alt="bergamo scienza"></div></li>
-                    <li style="width:25%; padding:10px;"><div class="image animate__animated animate__fadeIn animate__slower "><img src="./assets/images/logos/fosforo.png" alt="fosforo"></div></li>
-                    <li style="width:25%; padding:10px;"><div class="image animate__animated animate__fadeIn animate__slower "><img src="./assets/images/logos/cnr.png" alt="centro nazionale delle ricerche"></div></li>
-                    <li style="width:25%; padding:10px;"><div class="image animate__animated animate__fadeIn animate__slower "><img src="./assets/images/logos/unige.png" alt="Università degli studi di genova"></div></li>
+                    <li style="padding:10px;"><div class="image animate__animated animate__fadeIn animate__slower "><img src="./assets/images/logos/loghi.png" alt="bergamo scienza"></div></li>
                   </ul>
                 </div>
           </div>
@@ -260,5 +257,5 @@
     </div>
     </section>
   </body>
-  <script src="./index.js?v=2.5"></script>
+  <script src="./index.js?v=2.6"></script>
 </html>
