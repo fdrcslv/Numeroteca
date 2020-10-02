@@ -5,10 +5,12 @@ var app = new Vue({
     games:{},
     game:{
       mode:false,
-      picked: false
+      picked: 0,
+      answers:[],
     },
     images_root: "assets/images/",
     chosing_deck:{
+      card_list:[],
       card_picked:'',
       picked:false,
       closed:true
@@ -320,7 +322,7 @@ var app = new Vue({
        }
      };
 
-   xhttp.open("GET", "assets/games.json?v=2.4", true);
+   xhttp.open("GET", "assets/games.json?v=2.5", true);
    xhttp.send()
   },
   methods:{
@@ -358,7 +360,10 @@ var app = new Vue({
         }
       }
     },
-    pick: function(i,j){
+    pick_question: function(){
+
+    },
+    pick_mistery: function(i,j){
       if(!this.chosing_deck.closed){
         this.chosing_deck.picked = false;
       } else {
@@ -384,6 +389,20 @@ var app = new Vue({
     back: function(){
       this.phases.gameplay = false;
       this.current_numbers = [];
+    },
+    pick_game: function(g){
+      this.game.picked = g;
+      var qst = this.games[this.game.mode].games[this.game.picked].questions.length;
+      console.log(qst);
+      this.question_deck.card_list = Array.from(Array(qst), (x, i)=> String.fromCharCode(i+65));
+    },
+    pick_question:function(q){
+      this.question_deck.card_picked=q;
+      this._display_qst()
+      var root = this;
+      window.setTimeout(function(){
+        root.question_deck.card_list.splice((root.question_deck.card_list.indexOf(q)), 1)
+      }, 1000)
     },
     shuffle_array: function(shuffled) {
         for (var i = shuffled.length - 1; i > 0; i--) {
@@ -423,6 +442,8 @@ var app = new Vue({
         }
 
         this.passes_test = filter_function(this.current, args)
+
+        this.game.answers.push(JSON.parse(JSON.stringify(this.passes_test)));
 
         if(this.passes_test){
           this.eliminated = new Set(this.current_numbers.filter(el => !filter_function(el, args)));
@@ -579,7 +600,7 @@ var app = new Vue({
           root.game_deck.tada = false
         }, 1000)
 
-        return `Complimenti! Il numero misterioso è ${this.current}`
+        return `${this.current} - Ecco il numero misterioso!`
       }
 
     }

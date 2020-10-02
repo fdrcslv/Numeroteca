@@ -8,18 +8,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.0/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
-    <link rel="stylesheet" href="./assets/custom.css?v=2.4">
+    <link rel="stylesheet" href="./assets/custom.css?v=2.5">
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500&display=swap" rel="stylesheet">
   </head>
   <body style="font-family: 'Rubik', sans-serif;">
-    <section id='app' class="hero is-fullheight">
+    <section v-cloak id='app' class="hero is-fullheight">
       <div v-if="phases.gameplay" class="is-overlay">
         <div v-show="question_deck.visible" :class="['box has-text-centered animate__animated animate__fadeInDown', question_deck.container_class]" id="question_deck">
           <nav v-if="question_deck.picked" class="level">
             <!-- Left side -->
             <div class="level-left">
               <div class="level-item">
-                <h1 class="is-size-3">#{{current_question + 1}}</h1>
               </div>
               <div class="level-item">
                 <p class="is-size-3">{{current_question_content}}</p>
@@ -65,10 +64,10 @@
               'is-7': (questions.length - current_question) <  5 &&  (questions.length - current_question) > 1,
               'is-4': (questions.length - current_question) ==  1 }">
               <div :class="{'questions-container':true, 'animate__animated animate__fadeOut':question_deck.picked}" :style="{'grid-template-columns':get_qst_grid}"  style="transition: all 0.5s ease;">
-                <div v-for= "n in Array.from(Array(active_questions.length - current_question).keys()) " @click="question_deck.card_picked=n; _display_qst()">
+                <div v-for= "n in this.question_deck.card_list" @click="pick_question(n);">
                   <div :class="{'image num num-has-shadow':true, 'animate__animated animate__zoomOut':question_deck.card_picked==n}">
                     <img class="qst-image" src="./assets/images/back/0.png" :style={height:qst_height} alt="">
-                    <span style="position:absolute;">{{n}}</span>
+                    <span style="position:absolute; left: calc(50% - 0.5em);">{{n}}</span>
                   </div>
                 </div>
               </div>
@@ -171,7 +170,7 @@
             <div class="column is-12 is-10-fullhd">
               <div v-for="i in Array.from(Array(3).keys())" class="columns">
                 <div v-for="j in Array.from({length: 10}, (_, i) => i + 1)" class="column" :style="get_translation(j,i)">
-                  <img @click="chosing_deck.closed=!chosing_deck.closed; pick(i, j)" :class="{'num num-has-shadow': true, 'animate__animated animate__bounce glow-right': chosing_deck.card_picked == `${i}${j}`}" src="./assets/images/back/0.png" alt="">
+                  <img @click="chosing_deck.closed=!chosing_deck.closed; pick_mistery(i, j)" :class="{'num num-has-shadow': true, 'animate__animated animate__bounce glow-right': chosing_deck.card_picked == `${i}${j}`}" src="./assets/images/back/0.png" alt="">
                 </div>
               </div>
               <div class="columns is-centered is-marginless">
@@ -180,9 +179,9 @@
                     <button v-if="!chosing_deck.closed && !chosing_deck.picked" type="button" name="button" class="button is-large">Seleziona una carta misteriosa</button>
                     <template v-else-if="chosing_deck.closed && chosing_deck.picked">
                       <div class="buttons is-centered">
-                        <button type="button" name="button" class="button is-success is-large" @click="toggle_phase('gameplay'); game.picked=0;">Pronti</button>
-                        <button type="button" name="button" class="button is-danger is-large" @click="toggle_phase('gameplay'); game.picked=1;">Partenza</button>
-                        <button type="button" name="button" class="button is-warning is-large" @click="toggle_phase('gameplay'); game.picked=2">Via!</button>
+                        <button type="button" name="button" class="button is-success is-large" @click="toggle_phase('gameplay'); pick_game(0);">Pronti</button>
+                        <button type="button" name="button" class="button is-danger is-large" @click="toggle_phase('gameplay'); pick_game(1);">Partenza</button>
+                        <button type="button" name="button" class="button is-warning is-large" @click="toggle_phase('gameplay'); pick_game(2)">Via!</button>
                       </div>
                     </template>
                 </div>
@@ -214,7 +213,7 @@
                     <!-- <span style="position:absolute;">{{n}}</span> -->
                   </div>
               </div>
-              <div v-else class="columns is-centered">
+              <div v-else class="columns is-centered is-vcentered">
                 <div class="column is-4">
                   <div
                     :class="{
@@ -226,6 +225,12 @@
                     >
                     <img :src="`./assets/images/numbers/${current}.png`" alt="right guess">
                   </div>
+                </div>
+                <div class="column is-narrow">
+                  <p v-for="a, i in active_questions">{{a[2]}}
+                    <span v-if="game.answers[i]" class="is-size-3"> SI! <span class="icon has-text-primary"> <i class="fas fa-check"></i></span></span>
+                    <span v-else class="is-size-3"> NO! <span class="icon has-text-danger"> <i class="fas fa-times"></i></span></span>
+                  </p>
                 </div>
 
               </div>
@@ -255,5 +260,5 @@
     </div>
     </section>
   </body>
-  <script src="./index.js?v=2.4"></script>
+  <script src="./index.js?v=2.5"></script>
 </html>
