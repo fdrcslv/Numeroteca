@@ -1,59 +1,90 @@
+
 var app = new Vue({
   el:'#app',
   data:{
-    animate_cards:false,
-    closed_deck:true,
+    games:{},
+    game:{
+      mode:false,
+      picked: 0,
+      answers:[],
+    },
+    images_root: "assets/images/",
+    chosing_deck:{
+      card_list:[],
+      card_picked:'',
+      picked:false,
+      closed:true
+    },
+    question_deck:{
+      visible: false,
+      card_picked: null,
+      picked:false,
+      container_class:'question-picker-open',
+    },
+    game_deck:{
+      is_eliminating:false,
+      checked: false,
+      tada:true
+    },
     phases:{
       welcome:true,
       chosing_for_you:false,
       gameplay: false,
     },
-    is_eliminating:false,
-    card_picked:false,
-    picked:false,
-    has_picked_question:false,
-    _pick: 0,
-    mode:false,
-    answer:false,
-    eliminated:new Set(),
-    fake_eliminated: new Set(),
     info:{
       number_info:false,
       is_hiding_info:false,
       info_selection:false,
     },
-    not_checked: true,
-    picked_question: false,
-    qst_container_class:'question-picker-open',
-    display_qst:false,
-    question_list:[],
+    passes_test:false,
+    eliminated:new Set(),
+    fake_eliminated: new Set(),
+    current_numbers:[],
     current_question:0,
-    questions:[],
-    question_collection:{
-      is_irrational: arg => [[arg], "E' un numero irrazionale?"],
-      is_algebric: arg => [[arg], "E' un numero algebrico?"],
-      is_transcendental: arg => [[arg], "E' un numero trascendente?"],
-      is_fraction  : arg => [[arg], "E' una frazione?"],
-      is_odd: arg => [[], "E' un numero dispari?"],
-      is_multiple_of: arg => [[arg], `E' multiplo di ${arg}?`],
-      contains_digit: arg => [[arg], `Contiene il numero ${arg}?`],
-      has_length: arg => [[arg], `Ha una lunghezza di ${arg} cifre?`],
-      has_length_or_more: arg => [[arg], `Ha una lunghezza di ${arg} cifre o più?`],
-      has_sign: arg => [[arg], `Ha segno ${arg.toString().split('')[0]} ?`],
-      is_integer: arg => [[], "E' un numero intero?"],
-      is_palindrome: arg => [[], "E' un numero palindromo?"],
-      is_lesser_than: arg => [[arg], `E' un numero minore di ${arg}?`],
-      is_platonic: arg => [[], "E' un numero platonico?"],
-      is_perfect: arg => [[], "E' un numero perfetto?"],
-      is_power_of: arg => [[arg], `E' una potenza di ${arg}?`],
-      is_fibonacci: arg => [[], "E' un numero della serie di Fibonacci?"],
-      is_prime: arg => [[], "E' un numero primo?"],
-      is_decimal: arg => [[], "E' un numero decimale?"],
-      is_binary: arg => [[], "E' un numero binario?"],
-      is_made_of_n_digits_equal: arg => [[arg], `E' composto da ${arg} cifre uguali?`]
+    print_list: function(a, d, f, l){
+      return `${a.join(d).substring(0,a.join(d).lastIndexOf(f)) +
+      ' e' +
+      a.join(d).substring([a.join(d).lastIndexOf(l)])}`
     },
-    games:{},
-    games_loaded:false,
+    question_collection:{
+      is_natural: arg => [[], "È un numero naturale?"],
+      is_real : arg => [[], "È un numero reale?"],
+      is_periodic: arg => [[], "È un numero periodico?"],
+      is_phisical_constant: arg => [[], "È una costante fisica?"],
+      is_irrational: arg => [[], "È un numero irrazionale?"],
+      is_algebric: arg => [[], "È un numero algebrico?"],
+      is_transcendental: arg => [[], "È un numero trascendente?"],
+      is_fraction  : arg => [[], "È una frazione?"],
+      is_odd: arg => [[], "È un numero dispari?"],
+      is_multiple_of: arg => [[arg], `È multiplo di ${arg}?`],
+      contains_digit: arg => [[arg], `Contiene il numero ${arg}?`],
+      contains_multiple_digits: arg => [arg, `Contiene le cifre ${this.app.print_list(arg, ', ', ',', ' ')}?`],
+      has_length: arg => [[arg], `Ha una lunghezza di ${arg} cifr${arg==1 ? 'a':'e'}?`],
+      has_length_or_more: arg => [[arg], `Ha una lunghezza di ${arg} cifr${arg==1 ? 'a':'e'} o più?`],
+      has_sign: arg => [[arg], `Ha segno ${arg.toString().split('')[0]} ?`],
+      is_integer: arg => [[], "È un numero intero?"],
+      is_palindrome: arg => [[], "È un numero palindromo?"],
+      is_lesser_than: arg => [[arg], `È un numero minore di ${arg}?`],
+      is_platonic: arg => [[], "È un numero corrispondente alle facce dei solidi platonici?"],
+      is_perfect: arg => [[], "È un numero perfetto?"],
+      is_power_of: arg => [[arg], `È una potenza di ${arg}?`],
+      is_fibonacci: arg => [[], "È un numero della serie di Fibonacci?"],
+      is_prime: arg => [[], "È un numero primo?"],
+      is_decimal: arg => [[], "È un numero decimale?"],
+      is_binary: arg => [[], "È un numero binario?"],
+      is_made_of_n_digits_equal: arg => [[arg], `È composto da ${arg} cifre uguali?`],
+      is_result_from_expression: arg => [[arg], `È il risultato della seguente espressione ${arg} ? `],
+      its_modulus_is_lesser_than: arg =>[[arg] `Il suo modulo è minore di ${arg}`],
+      is_natural_and_even: arg =>[[], "È un numero naturale dispari?"],
+      is_natural_and_odd: arg =>[[],  "È un numero naturale pari?"],
+      is_made_of_n_significant_digits: arg => [[arg], `È composto da ${arg} cifr${arg==1 ? 'a':'e'} significativ${arg==1 ? 'a':'e'}?`],
+      is_even_and_multiple_of: arg => [[arg], `È un numero pari multiplo di ${arg}?`],
+      is_bigger_then: arg => [[arg], `È maggiore di ${arg}`],
+      is_current_year: arg => [[], `È l'anno in cui ci troviamo?`],
+      is_bigger_then_teacher: arg => [[], 'È un numero più grande dell’età della vostra insegnante?'],
+      is_french_card_deck: arg => [[], 'È il numero di carte di un seme in un mazzo di carte completo?'],
+      has_digits_equal: arg => [[], 'Contiene almeno due cifre uguali tra di loro?']
+    },
     star_numbers:{
       pi:{
         value:Math.PI,
@@ -71,25 +102,68 @@ var app = new Vue({
         value:(1 + Math.sqrt(5)) / 2,
         props: new Set(['irrational', 'algebric'])
       },
+      c:{
+        value: 299792458,
+        props: new Set(['phisical'])
+      },
+      gb:{
+        value: 1073741824,
+        props: new Set([])
+      },
+      googol:{
+        value: 100000000000000000000,
+        props: new Set([])
+      },
+      '2pow42':{
+        value: 4398046511104,
+        props: new Set([])
+      },
       '1/2':{
         value: 0.5,
         props: new Set(['fraction']),
         repr:true,
-      }
+      },
+      '-1/2':{
+        value:-0.5,
+        props: new Set(['fraction'])
+      },
+      '-0.3p':{
+        value:-1/3,
+        props: new Set(['fraction', 'periodic'])
+      },
+      '2/3':{
+        value:2/3,
+        props: new Set(['fraction', 'periodic'])
+      },
+      '1/3':{
+        value:1/3,
+        props: new Set(['fraction', 'periodic'])
+      },
     },
-    tada:true,
-    current:false,
-    current_numbers:[],
-    images_root: "assets/images/",
     need_repr: new Set(['contains_digit',]),
-    needs_key: new Set(['is_irrational', 'is_algebric', 'is_transcendental', 'is_fraction']),
+    needs_key: new Set(['is_irrational', 'is_algebric', 'is_transcendental', 'is_fraction', 'is_phisical_constant']),
     check_functions: {
+        is_natural: function(n){
+          console.log(this);
+          return this.app.check_functions.has_sign(n, 1) || n == 0
+        },
+        is_real: function(){
+          //crazy
+          return true
+        },
         has_special_prop: function(n, app, prop){
           if(app.star_numbers[n]){
             return app.star_numbers[n].props.has(prop)
           } else {
             return false
           }
+        },
+        //verbose, but helps with labels for the questions, and for the games.json standard
+        is_periodic: function(n){
+          return this.app.check_functions.has_special_prop(n, this.app, 'periodic')
+        },
+        is_phisical_constant: function (n){
+          return this.app.check_functions.has_special_prop(n, this.app, 'phisical')
         },
         is_irrational: function(n){
           return this.app.check_functions.has_special_prop(n, this.app, 'irrational')
@@ -104,8 +178,6 @@ var app = new Vue({
           return this.app.check_functions.has_special_prop(n, this.app, 'fraction')
         },
         is_odd: function(n){
-          console.log(n);
-          console.log((n - Math.floor(n)) == 0);
           if((n - Math.floor(n)) == 0){
             return n % 2 != 0
           } else {
@@ -117,6 +189,10 @@ var app = new Vue({
         },
         contains_digit: function(n, match){
           return n.toString().match(match) != null
+        },
+        contains_multiple_digits: function(n, ...matches){
+          const is_contained = (current) => n.toString().match(current) != null
+          return matches.every(is_contained)
         },
         has_length: function(n, l){
           return n.toString().length == l
@@ -156,17 +232,17 @@ var app = new Vue({
           const is_perfectsquare = x => Math.sqrt(x) * Math.sqrt(x) == x
           return is_perfectsquare(5*n*n + 4) || is_perfectsquare(5*n*n - 4)
         },
-        is_prime: function(num){
-          for(let i = 2, s = Math.sqrt(num); i <= s; i++){
-            if(num % i === 0) return false
+        is_prime: function(n){
+          for(let i = 2, s = Math.sqrt(n); i <= s; i++){
+            if(n % i === 0) return false
           }
-          return num > 1;
+          return n > 1;
         },
         is_decimal: function(n){
           if (n.fraction){
             return false
           } else {
-            return this.check_functions.is_integer(n)
+            return this.app.check_functions.is_integer(n)
           }
         },
         is_binary:  function (n){
@@ -174,19 +250,66 @@ var app = new Vue({
           var n_set = new Set(nlist)
           if(n_set.size > 2){
             return false
-          } else if (n_set.has(1) && n_set.has(0)) {
+          } else if (n_set.has(1) || n_set.has(0)) {
             return true
           } else {
             return false
           }
         },
-        is_made_of_n_digits_equal: function(num, n){
-          if(num.toString().length != n){
+        is_made_of_n_digits_equal: function(n, x){
+          if(n.toString().length != x){
             return false
           } else {
-            var digits = num.toString().split("")
+            var digits = n.toString().split("")
             return digits.every(d => d == digits[0])
           }
+        },
+        is_result_from_expression: function(n, expression){
+          //eval is evil I know
+          try {
+            var res = (n == eval(expression));
+          } catch (e) {
+            console.error('the expression is invalid')
+            res = false;
+          } finally {
+            return res;
+          }
+        },
+        its_modulus_is_lesser_than: function(n, x){
+          return this.app.check_functions.is_lesser_than(Math.abs(n), x)
+        },
+        is_natural_and_even: function(n){
+          var chf = this.app.check_functions;
+          return chf.is_natural(n) && chf.is_multiple_of(n, 2)
+        },
+        is_natural_and_odd: function(n){
+          var chf = this.app.check_functions;
+          return chf.is_natural(n) && chf.is_odd()
+        },
+        is_made_of_n_significant_digits: function(n, d){
+          return n.toString().split('.')[0].length == d
+        },
+        is_even_and_multiple_of: function(n, m){
+          var chf = this.app.check_functions;
+          return chf.is_multiple_of(n, m) && chf.is_multiple_of(n, 2)
+        },
+        is_bigger_then: function(n, m){
+          return n > m
+        },
+        is_current_year: function(n){
+          return new Date().getFullYear() == n
+        },
+        is_bigger_then_teacher: function(n){
+          return n > 25
+        },
+        is_french_card_deck: function(n){
+          return n == 13;
+        },
+        has_digits_equal: function(n){
+          var test = n.toString().split("");
+           return test.some(function(v,i,list){
+             return list.lastIndexOf(v)!=i;
+           });
         }
       }
   },
@@ -196,39 +319,35 @@ var app = new Vue({
     xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         root.games = JSON.parse(this.responseText)
-        root.games_loaded = true;
        }
      };
 
-   xhttp.open("GET", "assets/games.json", true);
+   xhttp.open("GET", "assets/games.json?v=2.6", true);
    xhttp.send()
   },
   methods:{
     _display_qst:function(){
       var root = this;
       window.setTimeout(function(){
-        root.has_picked_question = true;
-        root.display_qst = true;
-        root.qst_container_class =  'question-picker-down';
+        root.question_deck.picked = true;
+        root.question_deck.container_class =  'question-picker-down';
       },1000)
     },
     toggle_phase: function(phase){
-      console.log(phase,   this.phases[phase]);
       Object.keys(this.phases).forEach(v => this.phases[v] = false);
       this.phases[phase] = true;
-      console.log(  this.phases[phase]);
     },
     get_z_index:function(){
       return Math.floor(Math.random()*10);
     },
     get_translation: function(i, j){
-      if (!this.closed_deck && this.picked){
+      if (!this.chosing_deck.closed && this.chosing_deck.picked){
         return {
           'transform':'translate(0,0)',
           'transition-delay':'1s',
           'transition': 'all ease 0.5s',
         }
-      } else if (!this.closed_deck && !this.picked){
+      } else if (!this.chosing_deck.closed && !this.chosing_deck.picked){
         return {
           'transform':'translate(0,0)',
           'transition': 'all ease 0.5s',
@@ -241,37 +360,49 @@ var app = new Vue({
         }
       }
     },
-    pick: function(i,j){
-      if(!this.closed_deck){
-        this.picked = false;
-      } else {
-        this.picked = true;
-        this._pick  = Math.floor(Math.random() * this.games[this.mode].games.length)
-        console.log(this._pick);
-        this.questions = this.games[this.mode].games[this._pick].questions;
-        this.current = this.games[this.mode].games[this._pick].current;
-        this.card_picked = `${i}${j}`
-      }
+    pick_question: function(){
 
+    },
+    pick_mistery: function(i,j){
+      if(!this.chosing_deck.closed){
+        this.chosing_deck.picked = false;
+      } else {
+        this.chosing_deck.picked = true;
+        // this.game.picked  = Math.floor(Math.random() * this.games[this.game.mode].games.length);
+        // this.game.picked = 2;
+        this.chosing_deck.card_picked = `${i}${j}`
+      }
     },
     start: function(mode){
       this.toggle_phase('chosing_for_you')
-      this.is_eliminating=false;
-      this.mode=mode;
-      this.tada= true;
-      this.answer=false;
+      this.game_deck.is_eliminating=false;
+      this.game.mode = mode;
+      this.game_deck.tada= true;
+      this.passes_test=false;
       this.eliminated=new Set();
       this.fake_eliminated=new Set();
-      this.not_checked= true;
-      this.current_question=0;
-      this.not_checked = true;
-      this.current_numbers = JSON.parse(JSON.stringify(this.games[this.mode].numbers));
+      this.game_deck.checked= false;
+      this.current_numbers = JSON.parse(JSON.stringify(this.games[this.game.mode].numbers));
       // this.shuffle_array(this.current_numbers)
       this.current_question = 0
     },
     back: function(){
       this.phases.gameplay = false;
       this.current_numbers = [];
+    },
+    pick_game: function(g){
+      this.game.picked = g;
+      var qst = this.games[this.game.mode].games[this.game.picked].questions.length;
+      console.log(qst);
+      this.question_deck.card_list = Array.from(Array(qst), (x, i)=> String.fromCharCode(i+65));
+    },
+    pick_question:function(q){
+      this.question_deck.card_picked=q;
+      this._display_qst()
+      var root = this;
+      window.setTimeout(function(){
+        root.question_deck.card_list.splice((root.question_deck.card_list.indexOf(q)), 1)
+      }, 1000)
     },
     shuffle_array: function(shuffled) {
         for (var i = shuffled.length - 1; i > 0; i--) {
@@ -282,7 +413,6 @@ var app = new Vue({
         }
     },
     toggle_fake_eliminated: function(n){
-      console.log(n);
       if(this.fake_eliminated.has(n)){
         this.fake_eliminated.delete(n)
       } else {
@@ -291,19 +421,17 @@ var app = new Vue({
       this.$forceUpdate()
     },
     check_current: function(){
-        this.not_checked = false;
+        this.game_deck.checked = true;
+        this.question_deck.card_picked = -1;
         var type = this.active_questions[this.current_question][0]
         var args = this.active_questions[this.current_question][1]
         var func = this.check_functions[type]
         var root = this;
         function filter_function(el, args){
           var temp_el = el;
-          console.log(el);
           if(root.star_numbers[el]){
             if(root.need_repr.has(type)){
-              console.log(type, el);
               temp_el = (root.star_numbers[el].repr ? el :  root.star_numbers[el].value)
-              console.log(temp_el);
             } else if(root.needs_key.has(type)){
               temp_el = el
             } else {
@@ -315,19 +443,19 @@ var app = new Vue({
 
         this.passes_test = filter_function(this.current, args)
 
+        this.game.answers.push(JSON.parse(JSON.stringify(this.passes_test)));
+
         if(this.passes_test){
           this.eliminated = new Set(this.current_numbers.filter(el => !filter_function(el, args)));
-          this.answer = this.passes_test
         } else {
           this.eliminated = new Set(this.current_numbers.filter(el => filter_function(el, args)));
-          this.answer = this.passes_test;
         }
     },
     checks: function(){
       var type = this.active_questions[this.current_question][0]
       var args = this.active_questions[this.current_question][1]
       var func = this.check_functions[type]
-      this.is_eliminating = true;
+      this.game_deck.is_eliminating = true;
       var root = this;
       function filter_function(el, args){
         var temp_el = el;
@@ -347,20 +475,32 @@ var app = new Vue({
         } else {
           root.current_numbers = root.current_numbers.filter(el => !filter_function(el, args));
         }
-        root.not_checked = true;
+        root.game_deck.checked = false;
         root.current_question = root.current_question+1
-        root.is_eliminating = false;
+        console.log(root.current_question >= root.questions.length);
+        if(root.current_question >= root.questions.length){
+          root.question_deck.visible = true;
+          root.question_deck.picked = true;
+          root.question_deck.container_class = 'question-picker-down'
+        } else {
+          root.question_deck.visible = false;
+          root.question_deck.picked = false;
+          root.question_deck.container_class = 'question-picker-open';
+        }
+        root.game_deck.is_eliminating = false;
       }, 1000);
 
     },
     get_image: function(n){
       return this.images_root +
-      `${this.mode}/` +
-      n.toString().replace('.','').replace('/', 'over') +
-      '.jpg'
+      `numbers/` +
+      n.toString()
+        .replace('.','')
+        .replace('/', 'over') +
+      '.png'
     },
     delay: function(n){
-      if(this.is_eliminating){
+      if(this.game_deck.is_eliminating){
         return 0;
       }
       if(this.eliminated.has(n)){
@@ -373,7 +513,6 @@ var app = new Vue({
       }
     },
     get_info: function(n){
-      console.log(this.info.number_info);
       if(n){
         this.info.info_selection = n;
         this.info.number_info = !this.info.number_info;
@@ -388,9 +527,21 @@ var app = new Vue({
     }
   },
   computed:{
+    questions: function(){
+      return this.games[this.game.mode].games[this.game.picked].questions;
+    },
+    current: function(){
+      return this.games[this.game.mode].games[this.game.picked].current;
+    },
+    games_loaded: function(){
+      return !!this.games;
+    },
     get_qst_grid:function(){
       const get_cols = cols => Array(cols).fill('auto').join(' ')
       return get_cols(this.active_questions.length)
+    },
+    qst_height:function(){
+      return this.question_deck.picked ? '0 !important' : 'auto !important'
     },
     get_grid: function(){
       if(!this.current_numbers) return 'auto';
@@ -409,21 +560,34 @@ var app = new Vue({
       }
     },
     active_questions: function(){
-      if(!this.mode){
+      if(!this.game.mode){
         return [];
       }
       var questions = [];
       var regExp = /\(([^)]+)\)/;
+      var safe_expression = /([^0-9*/+().<>=-])/;
       for (let k in this.questions){
-        var qst = this.questions[k]
+        var qst = this.questions[k];
+        var func = qst.split("(")[0];
         var arg;
-        try {
-          arg = regExp.exec(qst)[1];
-        } catch (e) {
-          arg = null
+
+        if(func == 'is_result_from_expression'){
+          arg = qst.slice(qst.indexOf('(')+1, qst.lastIndexOf(')'))
+          if(! safe_expression.exec(arg)){
+              console.error('The expression can only contain numbers and mathematical operators */+().<>=-')
+          }
+        } else {
+          try {
+            arg = regExp.exec(qst)[1];
+            if(arg.includes(',')){
+
+              arg = arg.split(',')
+            }
+          } catch (e) {
+            arg = null
+          }
         }
-        var func = qst.split("(")[0]
-        questions.push([func].concat(this.question_collection[func](arg)))
+        questions.push([func,].concat(this.question_collection[func](arg)))
       }
       return questions
     },
@@ -433,10 +597,10 @@ var app = new Vue({
       } else {
         var root = this;
         window.setTimeout(function(){
-          root.tada = false
+          root.game_deck.tada = false
         }, 1000)
 
-        return `Complimenti! Il numero misterioso è ${this.current}`
+        return `${this.current} - Ecco il numero misterioso!`
       }
 
     }

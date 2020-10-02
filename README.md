@@ -57,7 +57,8 @@ The structure of the json is this:
 
 ### 2.1 Supported Questions
 These are the currentlòy suported questions, for integers, decimal, fractions, and "superstar" numbers like Pi etc.
-
+* is_periodic(n)
+* is_phisical_constant()
 * is_irrational()
 * is_algebric()
 * is_transcendental()
@@ -79,6 +80,12 @@ These are the currentlòy suported questions, for integers, decimal, fractions, 
 * is_decimal()
 * is_binary()
 * is_made_of_n_digits_equal(n)
+* is_result_from_expression(n, expression)
+* its_modulus_is_lesser_than(n, x)
+* is_natural_and_even: function(n)
+* is_natural_and_odd(n)
+* is_made_of_n_significant_digits(n, d)
+* is_even_and_multiple_of(n, m)
 
 ### 2.2 Question formatting in games.json
 To instruct the app to ask a question, just pick a question from the list and write it in the ```questions``` list parameter of the game. If
@@ -110,14 +117,21 @@ The special numbers supported are:
 * e
 * phi
 * root2
+* googol
+* c
+* GB
 
 Also fractions (like 1/2) need a special treatment since their representation is different from their value. The question "contains_digit(2)" for 1/2 is true for its representation, but not for its value.
 
 ## 4. Images
 File names for the number cards are the same as the number they represent: 1.jpg for the number 1 and pi.jpg for Pi.
 
-In some cases we follow two simple rules of substitution:
+In some cases we follow rules of substitution:
 
 Numbers like 0.4 map to a filename like 04.jpeg
+
+Numbers like 0.33333333... map to 03p.jpeg
+
+Powers like 2^42 map to 2pow42.jpeg 
 
 Numbers like 1/2 map to a filename formatted as 1over2.jpeg

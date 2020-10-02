@@ -1,5 +1,49 @@
 {
   "easy":{
+    "numbers":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,25,30,50,100,999,1492,1969,2013,2014,2020],
+    "games":[
+      {
+        "current":1,
+        "questions":[
+          "is_multiple_of(10)",
+          "is_odd",
+          "has_length(4)",
+          "contains_digit(9)",
+          "is_multiple_of(3)",
+          "contains_digit(1)",
+          "is_made_of_n_digits_equal(2)",
+          "is_lesser_than(10)"
+        ]
+      },
+      {
+        "current":2020,
+        "questions":[
+          "has_length(3)",
+          "contains_digit(9)",
+          "contains_multiple_digits(2,3)",
+          "is_multiple_of(3)",
+          "is_multiple_of(2)",
+          "contains_digit(1)",
+          "is_bigger_then(10)",
+          "is_current_year"
+        ]
+      },
+      {
+        "current":13,
+        "questions":[
+          "has_digits_equal",
+          "is_multiple_of(5)",
+          "is_bigger_then_teacher",
+          "is_multiple_of(3)",
+          "is_odd",
+          "contains_digit(1)",
+          "has_length(1)",
+          "is_french_card_deck"
+        ]
+      }
+    ]
+  },
+  "medium":{
     "numbers":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
     "games":[
       {
@@ -12,17 +56,77 @@
           "has_length(2)",
           "is_made_of_n_digits_equal(2)"
         ]
+      },
+      {
+        "current":3,
+        "questions":[
+          "is_multiple_of(5)",
+          "contains_digit(1)",
+          "is_odd",
+          "has_length(1)",
+          "is_multiple_of(3)",
+          "is_result_from_expression(((5+3)*2 -10)/2)"
+        ]
+      },
+      {
+        "current":27,
+        "questions":[
+          "is_even_and_multiple_of(3)",
+          "contains_digit(3)",
+          "is_multiple_of(2)",
+          "has_length(2)",
+          "contains_digit(1)",
+          "is_multiple_of(3)"
+        ]
       }
     ]
   },
-  "medium":{
-    "numbers":[],
+  "hard":{
+    "numbers":[-10,-1,"-1/2","-0.3p",0,"2/3",1,1,5,2,3,3,14,"pi",4,5,6,7,8,9,10,12,15,17,20,22,50,100,1000,1991,2020,2021],
     "games":[
+      {
+        "current":12,
+        "questions":[
+          "is_multiple_of(5)",
+          "has_length(4)",
+          "is_irrational",
+          "is_integer",
+          "has_length(2)",
+          "is_palindrome",
+          "is_natural_and_even"
+        ]
+      }
 
     ]
   },
-  "hard":{
-    "numbers":[],
+  "hard_plus":{
+    "numbers":[-10,-1,0,0.3,"1/3",1,"root2","phi",2,"e",3,"pi",4,5,6,8,10,12,13,20,21,28,100,496,2020,8128,"c","gb",242,"googol"],
     "games":[]
+  },
+  "info":{
+    "3": {
+      "text":"È il primo numero triangolare. Un numero è divisibile per 3 se la somma di tutte le sue cifre è pari a 3 o ad un suo multiplo. Il numero 345 è divisibile per tre infatti la somma delle cifre è: 3+4+5 =12",
+      "image":true
+    },
+    "6": {
+      "text":"Euclide lo considerava il numero perfetto. Per i pitagorici il 6 rappresentava la stabilità e l’equilibrio. È al somma dei suoi fattori (1 + 2 + 3 = 6). È anche il prodotto dei suoi fattori (1 x 2 x 3 = 6)",
+      "image":false
+    },
+    "10": {
+      "text":"Per i pitagorici i 10 era “il numero del mondo” . È la base del sistema decimale. Oggi ha un grande significato legato allo sport del calcio e alla maglia di grandissimi giocatori: Maradona, Francesco Totti, Alessandro Del Piero, Lionel Messi per citarne alcuni.",
+      "image":false
+    },
+    "999": {
+      "text":"È un numero con tantissime qualità. È multiplo di tre, è il numero prima di 1000, è composto da tre cifre uguali, è un numero palindromo, e letto al contrario è 666!",
+      "image":false
+    },
+    "1492": {
+      "text":"È un numero pari! Il 1492 come anno è la data della scoperta dell'America considerata dagli storici la fine del Medioevo e la fine dell'Età moderna.",
+      "image":true
+    },
+    "1969": {
+      "text":"È un numero dispari. Nell’anno 1969 l'uomo sbarca sulla Luna: Neil Armstrong e Buzz Aldrin, sono i primi uomini a camminare sul suolo lunare con la missione spaziale Apollo 11",
+      "image":true
+    }
   }
 }
