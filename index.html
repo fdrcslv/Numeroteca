@@ -12,67 +12,63 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500&display=swap" rel="stylesheet">
   </head>
   <body style="font-family: 'Rubik', sans-serif;">
-    <section id='app' class="hero is-fullheight has-background">
-      <!-- number info modal  -->
+    <section id='app' class="hero is-fullheight">
       <div v-if="phases.gameplay" class="is-overlay" >
-        <div :class="['box has-text-centered', qst_container_class]">
-          <nav v-if="has_picked_question" class="level">
-          <!-- Left side -->
-          <div class="level-left">
-            <div class="level-item">
-              <h1 class="is-size-3">#{{current_question + 1}}</h1>
-            </div>
-            <div class="level-item">
-              <p class="is-size-3">{{current_question_content}}</p>
-            </div>
-          </div>
-          <p class="level-item">
-          <template v-if="not_checked">
-          </template>
-          <template v-else>
-            <p v-if="answer" class="is-size-3"> SI! <span class="icon has-text-primary"> <i class="fas fa-check"></i></span></p>
-            <p v-else class="is-size-3"> NO! <span class="icon has-text-danger"> <i class="fas fa-times"></i></span></p>
-          </template>
-          </p>
-          <!-- Right side -->
-          <div class="level-right">
-
-            <p class="level-item">
-              <template v-if="current_numbers.length == 1">
-                <a
-                class="button is-fullwidth is-success"
-                type="button" name="button"
-                @click="start(mode)">
-                Ricomincia</a>
-              </template>
-              <template v-else>
-                <a
-                v-if="not_checked"
-                class="button is-fullwidth is-warning"
-                type="button" name="button"
-                @click="check_current()">
-                Mostra Risposta</a>
-                <a
-                v-else="not_checked"
-                class="button is-fullwidth is-danger"
-                type="button" name="button"
-                @click="checks()">
-                Elimina Carte</a>
-              </template>
-            </p>
-          </div>
-          </nav>
-          <p v-if="!has_picked_question">Seleziona uina carta e scopri la domanda</p>
-          <div :class="{'questions-container':true, 'animate__animated animate__fadeOut':has_picked_question}" :style="{'grid-template-columns':get_qst_grid}"  style="transition: all 0.5s ease;">
-            <div v-for= "n in active_questions" @click="picked_question=n; _display_qst()">
-              <div :class="{'image num num-has-shadow':true, 'animate__animated animate__zoomOut':picked_question==n}">
-                <img src="./assets/images/back/0.png" alt="">
+        <div :class="['box has-text-centered', question_deck.container_class]" id="question_deck">
+          <nav v-if="question_deck.picked" class="level">
+            <!-- Left side -->
+            <div class="level-left">
+              <div class="level-item">
+                <h1 class="is-size-3">#{{current_question + 1}}</h1>
+              </div>
+              <div class="level-item">
+                <p class="is-size-3">{{current_question_content}}</p>
               </div>
             </div>
+            <p class="level-item">
+              <template v-if="game_deck.checked">
+                <p v-if="passes_test" class="is-size-3"> SI! <span class="icon has-text-primary"> <i class="fas fa-check"></i></span></p>
+                <p v-else class="is-size-3"> NO! <span class="icon has-text-danger"> <i class="fas fa-times"></i></span></p>
+              </template>
+            </p>
+            <!-- Right side -->
+            <div class="level-right">
+              <p class="level-item">
+                <template v-if="current_numbers.length == 1">
+                  <a
+                  class="button is-fullwidth is-success"
+                  type="button" name="button"
+                  @click="start(game.mode)">
+                  Ricomincia</a>
+                </template>
+                <template v-else>
+                  <a
+                  v-if="!game_deck.checked"
+                  class="button is-fullwidth is-warning"
+                  type="button" name="button"
+                  @click="check_current()">
+                  Mostra Risposta</a>
+                  <a
+                  v-else
+                  class="button is-fullwidth is-danger"
+                  type="button" name="button"
+                  @click="checks()">
+                  Elimina Carte</a>
+                </template>
+              </p>
+            </div>
+          </nav>
+          <p v-if="!question_deck.picked">Seleziona uina carta e scopri la domanda</p>
+          <div :class="{'questions-container':true, 'animate__animated animate__fadeOut':question_deck.picked}" :style="{'grid-template-columns':get_qst_grid}"  style="transition: all 0.5s ease;">
+            <div v-for= "n in active_questions" @click="question_deck.card_picked=n; _display_qst()">
+              <div :class="{'image num num-has-shadow':true, 'animate__animated animate__zoomOut':question_deck.card_picked==n}">
+                <img class="qst-image" src="./assets/images/back/0.png" :style={height:qst_height} alt="">
+              </div>
+          </div>
           </div>
         </div>
       </div>
-      <div @click="get_info()" :class="{'modal':true, 'is-active':info.number_info}">
+      <div @click="get_info()" :class="{'modal':true, 'is-active':info.number_info}" id="info">
         <div :class="{'modal-background animate__animated':true,
           'animate__fadeIn animate__slow':info.number_info && !info.is_hiding_info,
           'animate__fadeOut animated__faster':info.is_hiding_info
@@ -102,8 +98,6 @@
           </section>
         </div>
       </div>
-      <img alt="" v-if="phases.welcome" class="hero-background" src="assets/images/background.png" style="z-index:1"/>
-      <!-- Hero head: will stick at the top -->
       <div class="hero-head">
         <nav class="navbar">
           <div class="container">
@@ -128,7 +122,7 @@
                   </a>
                 </span>
                 <span class="navbar-item">
-                  <a class="button" @click="start(mode)">
+                  <a class="button" @click="start(game.mode)">
                     <span class="icon">
                       <i class="fas fa-redo-alt"></i>
                     </span>
@@ -140,85 +134,104 @@
           </div>
         </nav>
       </div>
-      <!-- Hero content: will be in the middle -->
-      <div v-if ="phases.chosing_for_you" class="hero-body">
-        <div class="columns is-centered">
-          <div class="column is-12 is-10-fullhd">
-            <div v-for="i in Array.from(Array(3).keys())" class="columns">
-              <div v-for="j in Array.from({length: 10}, (_, i) => i + 1)" class="column" :style="get_translation(j,i)">
-                <img @click="closed_deck=!closed_deck; pick(i, j)" :class="{'num num-has-shadow': true, 'animate__animated animate__bounce glow-right': card_picked == `${i}${j}`}" src="./assets/images/back/0.png" alt="">
-              </div>
-            </div>
-            <div class="columns is-centered is-marginless">
-              <div class="column is-7 has-text-centered">
-                  <button v-if="closed_deck && !picked" type="button" name="button" class="button is-large">Clicca sul mazzo!</button>
-                  <button v-if="!closed_deck && !picked" type="button" name="button" class="button is-large">Seleziona una carta misteriosa</button>
-                  <button v-else-if="closed_deck && picked" type="button" name="button" class="button is-primary is-large" @click="toggle_phase('gameplay')">Iniziamo!</button>
+      <div class="hero-body">
+        <template v-if="phases.welcome">
+          <div class="container">
+          <div class="columns is-centered">
+            <div class="column is-half">
+              <div class="box animate__animated animate__fadeInDown">
+                <div class="image">
+                  <img alt="" v-if="phases.welcome" src="assets/images/background.png" style="z-index:1"/>
+                </div>
               </div>
             </div>
           </div>
-
-        </div>
-      </div>
-      <div v-if="phases.gameplay" class="hero-body">
-        <div class="columns is-centered" style="min-width: 100%;">
-          <div :class="{'column':true, 'is-11 is-10-fullhd':current_numbers.length>3, 'is-7':current_numbers.length<=3}">
-            <div v-if="current_numbers.length > 1" class="grid-container animate__animated animate__fadeIn animate__slow" :style="{'grid-template-columns': get_grid}">
-                <div v-for="n in current_numbers"
-                  :class="{
-                    'image num num-has-shadow animate__animated filler':true,
-                    'animate__fadeIn':animate_cards,
-                    'glow animate__bounce':fake_eliminated.has(n),
-                    'glow-right':!not_checked && is_eliminating && !eliminated.has(n),
-                    'glow animate__flipOutX animate__fast': is_eliminating && eliminated.has(n)
-                  }"
-                  :style="{'animation-delay':delay(n)}"
-                  @click="toggle_fake_eliminated(n)"
-                >
-                  <img :src="get_image(n)" alt="">
-                  <a  type="button" class="num-info" name="button" @click.stop="get_info(n)">
-                    <div class="icon">
-                      <i class="fas fa-info-circle"></i>
-                    </div>
-                  </a>
-                  <!-- <span style="position:absolute;">{{n}}</span> -->
-                </div>
+          <div class="columns is-centered">
+            <div class="column is-one-quarter">
+              <div class="buttons are-medium is-centered animate__animated animate__fadeInUp">
+                <button :class="{'button is-primary is-rounded':true, 'is-loading':!games_loaded}" @click="start('easy')"></button>
+                <button :class="{'button is-warning is-rounded':true, 'is-loading':!games_loaded}" @click="start('medium')"></button>
+                <button :class="{'button is-danger is-rounded':true, 'is-loading':!games_loaded}" @click="start('hard')"></button>
+              </div>
             </div>
-            <div v-else class="columns is-centered">
-              <div class="column is-4">
-                <div
-                  :class="{
-                    'image animate__animated':true,
-                    'animate__tada':tada,
-                    'animate__pulse animate__slow':!tada
-                  }"
-                  :style="{'animation-iteration-count': !tada || 'infinite'}"
+          </div>
+          </div>
+        </template>
+        <template v-else-if="phases.chosing_for_you">
+          <div class="columns is-centered">
+            <div class="column is-12 is-10-fullhd">
+              <div v-for="i in Array.from(Array(3).keys())" class="columns">
+                <div v-for="j in Array.from({length: 10}, (_, i) => i + 1)" class="column" :style="get_translation(j,i)">
+                  <img @click="chosing_deck.closed=!chosing_deck.closed; pick(i, j)" :class="{'num num-has-shadow': true, 'animate__animated animate__bounce glow-right': chosing_deck.card_picked == `${i}${j}`}" src="./assets/images/back/0.png" alt="">
+                </div>
+              </div>
+              <div class="columns is-centered is-marginless">
+                <div class="column is-7 has-text-centered">
+                    <button v-if="chosing_deck.closed && !chosing_deck.picked" type="button" name="button" class="button is-large">Clicca sul mazzo!</button>
+                    <button v-if="!chosing_deck.closed && !chosing_deck.picked" type="button" name="button" class="button is-large">Seleziona una carta misteriosa</button>
+                    <button v-else-if="chosing_deck.closed && chosing_deck.picked" type="button" name="button" class="button is-primary is-large" @click="toggle_phase('gameplay')">Iniziamo!</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </template>
+        <template v-else-if="phases.gameplay">
+          <div class="columns is-centered" style="min-width: 100%;">
+            <div :class="{'column':true, 'is-11 is-10-fullhd':current_numbers.length>3, 'is-7':current_numbers.length<=3}">
+              <div v-if="current_numbers.length > 1" class="grid-container animate__animated animate__fadeIn animate__slow" :style="{'grid-template-columns': get_grid}">
+                  <div v-for="n in current_numbers"
+                    :class="{
+                      'image num num-has-shadow animate__animated filler':true,
+                      'glow animate__bounce':fake_eliminated.has(n),
+                      'glow-right':game_deck.checked && game_deck.is_eliminating && !eliminated.has(n),
+                      'glow animate__flipOutX animate__fast': game_deck.is_eliminating && eliminated.has(n)
+                    }"
+                    :style="{'animation-delay':delay(n)}"
+                    @click="toggle_fake_eliminated(n)"
                   >
-                  <img :src="`./assets/images/${mode}/${current}.png`" alt="right guess">
-                </div>
+                    <img :src="get_image(n)" alt="">
+                    <a  type="button" class="num-info" name="button" @click.stop="get_info(n)">
+                      <div class="icon">
+                        <i class="fas fa-info-circle"></i>
+                      </div>
+                    </a>
+                    <!-- <span style="position:absolute;">{{n}}</span> -->
+                  </div>
               </div>
+              <div v-else class="columns is-centered">
+                <div class="column is-4">
+                  <div
+                    :class="{
+                      'image animate__animated':true,
+                      'animate__game_deck.tada':game_deck.tada,
+                      'animate__pulse animate__slow':!game_deck.tada
+                    }"
+                    :style="{'animation-iteration-count': !game_deck.tada || 'infinite'}"
+                    >
+                    <img :src="`./assets/images/${game.mode}/${current}.png`" alt="right guess">
+                  </div>
+                </div>
 
+              </div>
             </div>
           </div>
-        </div>
+        </template>
       </div>
       <!-- Hero footer: will stick at the bottom -->
-      <div class="hero-foot" style="z-index: 2; min-height:130px;">
-        <div v-if="phases.gameplay" class="columns is-marginless is-centered">
-          <div class="column is-7">
-            <!-- Main container -->
-
+      <div v-if="phases.welcome || phases.gameplay" :class="{'hero-foot':true, 'has-background-light':phases.welcome}" style="z-index: 2; min-height:130px;">
+        <template v-if="phases.welcome">
+          <div class="animate__animated animate__fadeInUp animate__delay-300ms">
+                <div class="tabs is-centered" style="width:60%; margin:auto;">
+                  <ul style="width:50%">
+                    <li style="width:25%; padding:10px;"><div class="image animate__animated animate__fadeIn animate__slower "><img src="./assets/images/logos/bgs.png" alt="bergamo scienza"></div></li>
+                    <li style="width:25%; padding:10px;"><div class="image animate__animated animate__fadeIn animate__slower "><img src="./assets/images/logos/fosforo.png" alt="fosforo"></div></li>
+                    <li style="width:25%; padding:10px;"><div class="image animate__animated animate__fadeIn animate__slower "><img src="./assets/images/logos/cnr.png" alt="centro nazionale delle ricerche"></div></li>
+                    <li style="width:25%; padding:10px;"><div class="image animate__animated animate__fadeIn animate__slower "><img src="./assets/images/logos/unige.png" alt="Università degli studi di genova"></div></li>
+                  </ul>
+                </div>
           </div>
-        </div>
-      <div v-if="phases.welcome" class="box animate__animated animate__fadeInUp animate__delay-300ms animate__faster">
-        <h1 class="is-size-2">Benvenuto!</h1>
-        <p style="margin-bottom:5px">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <div class="buttons are-medium">
-          <button :class="{'button is-primary':true, 'is-loading':!games_loaded}" @click="start('easy')">Facile</button>
-          <button :class="{'button is-warning':true, 'is-loading':!games_loaded}" @click="start('medium')">Medio</button>
-          <button :class="{'button is-danger':true, 'is-loading':!games_loaded}" @click="start('hard')">Difficile</button>
-        </div>
-      </div>
+        </template>
     </div>
     </section>
   </body>
