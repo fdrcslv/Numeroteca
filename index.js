@@ -14,6 +14,7 @@ var app = new Vue({
       closed:true
     },
     question_deck:{
+      visible: false,
       card_picked: null,
       picked:false,
       container_class:'question-picker-open',
@@ -36,10 +37,13 @@ var app = new Vue({
     passes_test:false,
     eliminated:new Set(),
     fake_eliminated: new Set(),
-    current:false,
     current_numbers:[],
     current_question:0,
-    questions:[],
+    print_list: function(a, d, f, l){
+      return `${a.join(d).substring(0,a.join(d).lastIndexOf(f)) +
+      ' e' +
+      a.join(d).substring([a.join(d).lastIndexOf(l)])}`
+    },
     question_collection:{
       is_natural: arg => [[], "È un numero naturale?"],
       is_real : arg => [[], "È un numero reale?"],
@@ -52,6 +56,7 @@ var app = new Vue({
       is_odd: arg => [[], "È un numero dispari?"],
       is_multiple_of: arg => [[arg], `È multiplo di ${arg}?`],
       contains_digit: arg => [[arg], `Contiene il numero ${arg}?`],
+      contains_multiple_digits: arg => [arg, `Contiene le cifre ${this.app.print_list(arg, ', ', ',', ' ')}?`],
       has_length: arg => [[arg], `Ha una lunghezza di ${arg} cifr${arg==1 ? 'a':'e'}?`],
       has_length_or_more: arg => [[arg], `Ha una lunghezza di ${arg} cifr${arg==1 ? 'a':'e'} o più?`],
       has_sign: arg => [[arg], `Ha segno ${arg.toString().split('')[0]} ?`],
@@ -71,7 +76,12 @@ var app = new Vue({
       is_natural_and_even: arg =>[[], "È un numero naturale dispari?"],
       is_natural_and_odd: arg =>[[],  "È un numero naturale pari?"],
       is_made_of_n_significant_digits: arg => [[arg], `È composto da ${arg} cifr${arg==1 ? 'a':'e'} significativ${arg==1 ? 'a':'e'}?`],
-      is_even_and_multiple_of: arg => [[arg], `È un numero pari multiplo di ${arg}?`]
+      is_even_and_multiple_of: arg => [[arg], `È un numero pari multiplo di ${arg}?`],
+      is_bigger_then: arg => [[arg], `È maggiore di ${arg}`],
+      is_current_year: arg => [[], `È l'anno in cui ci troviamo?`],
+      is_bigger_then_teacher: arg => [[], 'È un numero più grande dell’età della vostra insegnante?'],
+      is_french_card_deck: arg => [[], 'È il numero di carte di un seme in un mazzo di carte completo?'],
+      has_digits_equal: arg => [[], 'Contiene almeno due cifre uguali tra di loro?']
     },
     star_numbers:{
       pi:{
@@ -177,6 +187,10 @@ var app = new Vue({
         contains_digit: function(n, match){
           return n.toString().match(match) != null
         },
+        contains_multiple_digits: function(n, ...matches){
+          const is_contained = (current) => n.toString().match(current) != null
+          return matches.every(is_contained)
+        },
         has_length: function(n, l){
           return n.toString().length == l
         },
@@ -275,6 +289,24 @@ var app = new Vue({
         is_even_and_multiple_of: function(n, m){
           var chf = this.app.check_functions;
           return chf.is_multiple_of(n, m) && chf.is_multiple_of(n, 2)
+        },
+        is_bigger_then: function(n, m){
+          return n > m
+        },
+        is_current_year: function(n){
+          return new Date().getFullYear() == n
+        },
+        is_bigger_then_teacher: function(n){
+          return n > 25
+        },
+        is_french_card_deck: function(n){
+          return n == 13;
+        },
+        has_digits_equal: function(n){
+          var test = n.toString().split("");
+           return test.some(function(v,i,list){
+             return list.lastIndexOf(v)!=i;
+           });
         }
       }
   },
@@ -330,12 +362,10 @@ var app = new Vue({
         this.chosing_deck.picked = false;
       } else {
         this.chosing_deck.picked = true;
-        this.game.picked  = Math.floor(Math.random() * this.games[this.game.mode].games.length);
-        this.questions = this.games[this.game.mode].games[this.game.picked].questions;
-        this.current = this.games[this.game.mode].games[this.game.picked].current;
+        // this.game.picked  = Math.floor(Math.random() * this.games[this.game.mode].games.length);
+        // this.game.picked = 2;
         this.chosing_deck.card_picked = `${i}${j}`
       }
-
     },
     start: function(mode){
       this.toggle_phase('chosing_for_you')
@@ -372,6 +402,7 @@ var app = new Vue({
     },
     check_current: function(){
         this.game_deck.checked = true;
+        this.question_deck.card_picked = -1;
         var type = this.active_questions[this.current_question][0]
         var args = this.active_questions[this.current_question][1]
         var func = this.check_functions[type]
@@ -424,6 +455,16 @@ var app = new Vue({
         }
         root.game_deck.checked = false;
         root.current_question = root.current_question+1
+        console.log(root.current_question >= root.questions.length);
+        if(root.current_question >= root.questions.length){
+          root.question_deck.visible = true;
+          root.question_deck.picked = true;
+          root.question_deck.container_class = 'question-picker-down'
+        } else {
+          root.question_deck.visible = false;
+          root.question_deck.picked = false;
+          root.question_deck.container_class = 'question-picker-open';
+        }
         root.game_deck.is_eliminating = false;
       }, 1000);
 
@@ -464,8 +505,13 @@ var app = new Vue({
     }
   },
   computed:{
+    questions: function(){
+      return this.games[this.game.mode].games[this.game.picked].questions;
+    },
+    current: function(){
+      return this.games[this.game.mode].games[this.game.picked].current;
+    },
     games_loaded: function(){
-      console.log('here');
       return !!this.games;
     },
     get_qst_grid:function(){
@@ -511,11 +557,15 @@ var app = new Vue({
         } else {
           try {
             arg = regExp.exec(qst)[1];
+            if(arg.includes(',')){
+
+              arg = arg.split(',')
+            }
           } catch (e) {
             arg = null
           }
         }
-        questions.push([func].concat(this.question_collection[func](arg)))
+        questions.push([func,].concat(this.question_collection[func](arg)))
       }
       return questions
     },

@@ -13,8 +13,8 @@
   </head>
   <body style="font-family: 'Rubik', sans-serif;">
     <section id='app' class="hero is-fullheight">
-      <div v-if="phases.gameplay" class="is-overlay" >
-        <div :class="['box has-text-centered', question_deck.container_class]" id="question_deck">
+      <div v-if="phases.gameplay" class="is-overlay">
+        <div v-show="question_deck.visible" :class="['box has-text-centered animate__animated animate__fadeInDown', question_deck.container_class]" id="question_deck">
           <nav v-if="question_deck.picked" class="level">
             <!-- Left side -->
             <div class="level-left">
@@ -58,13 +58,21 @@
               </p>
             </div>
           </nav>
-          <p v-if="!question_deck.picked">Seleziona uina carta e scopri la domanda</p>
-          <div :class="{'questions-container':true, 'animate__animated animate__fadeOut':question_deck.picked}" :style="{'grid-template-columns':get_qst_grid}"  style="transition: all 0.5s ease;">
-            <div v-for= "n in active_questions" @click="question_deck.card_picked=n; _display_qst()">
-              <div :class="{'image num num-has-shadow':true, 'animate__animated animate__zoomOut':question_deck.card_picked==n}">
-                <img class="qst-image" src="./assets/images/back/0.png" :style={height:qst_height} alt="">
+          <p v-if="!question_deck.picked" class="is-size-4">Seleziona una carta e scopri la domanda</p>
+          <div class="columns is-centered">
+            <div :class="{'column':true,
+              'is-12': (questions.length - current_question) > 4 ,
+              'is-7': (questions.length - current_question) <  5 &&  (questions.length - current_question) > 1,
+              'is-4': (questions.length - current_question) ==  1 }">
+              <div :class="{'questions-container':true, 'animate__animated animate__fadeOut':question_deck.picked}" :style="{'grid-template-columns':get_qst_grid}"  style="transition: all 0.5s ease;">
+                <div v-for= "n in Array.from(Array(active_questions.length - current_question).keys()) " @click="question_deck.card_picked=n; _display_qst()">
+                  <div :class="{'image num num-has-shadow':true, 'animate__animated animate__zoomOut':question_deck.card_picked==n}">
+                    <img class="qst-image" src="./assets/images/back/0.png" :style={height:qst_height} alt="">
+                    <span style="position:absolute;">{{n}}</span>
+                  </div>
+                </div>
               </div>
-          </div>
+            </div>
           </div>
         </div>
       </div>
@@ -169,7 +177,13 @@
                 <div class="column is-7 has-text-centered">
                     <button v-if="chosing_deck.closed && !chosing_deck.picked" type="button" name="button" class="button is-large">Clicca sul mazzo!</button>
                     <button v-if="!chosing_deck.closed && !chosing_deck.picked" type="button" name="button" class="button is-large">Seleziona una carta misteriosa</button>
-                    <button v-else-if="chosing_deck.closed && chosing_deck.picked" type="button" name="button" class="button is-primary is-large" @click="toggle_phase('gameplay')">Iniziamo!</button>
+                    <template v-else-if="chosing_deck.closed && chosing_deck.picked">
+                      <div class="buttons is-centered">
+                        <button type="button" name="button" class="button is-success is-large" @click="toggle_phase('gameplay'); game.picked=0;">Pronti</button>
+                        <button type="button" name="button" class="button is-danger is-large" @click="toggle_phase('gameplay'); game.picked=1;">Partenza</button>
+                        <button type="button" name="button" class="button is-warning is-large" @click="toggle_phase('gameplay'); game.picked=2">Via!</button>
+                      </div>
+                    </template>
                 </div>
               </div>
             </div>
@@ -204,7 +218,7 @@
                   <div
                     :class="{
                       'image animate__animated':true,
-                      'animate__game_deck.tada':game_deck.tada,
+                      'animate__tada':game_deck.tada,
                       'animate__pulse animate__slow':!game_deck.tada
                     }"
                     :style="{'animation-iteration-count': !game_deck.tada || 'infinite'}"
@@ -230,6 +244,11 @@
                     <li style="width:25%; padding:10px;"><div class="image animate__animated animate__fadeIn animate__slower "><img src="./assets/images/logos/unige.png" alt="Università degli studi di genova"></div></li>
                   </ul>
                 </div>
+          </div>
+        </template>
+        <template v-else-if="phases.gameplay">
+          <div class="buttons is-centered" v-if="!question_deck.visible">
+            <button class="button" type="button" name="button" @click="question_deck.visible = true;"> Carte Domanda</button>
           </div>
         </template>
     </div>
