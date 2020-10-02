@@ -142,6 +142,7 @@ var app = new Vue({
     needs_key: new Set(['is_irrational', 'is_algebric', 'is_transcendental', 'is_fraction', 'is_phisical_constant']),
     check_functions: {
         is_natural: function(n){
+          console.log(this);
           return this.app.check_functions.has_sign(n, 1) || n == 0
         },
         is_real: function(){
@@ -471,7 +472,7 @@ var app = new Vue({
     },
     get_image: function(n){
       return this.images_root +
-      `${this.game.mode}/` +
+      `numbers/` +
       n.toString()
         .replace('.','')
         .replace('/', 'over') +

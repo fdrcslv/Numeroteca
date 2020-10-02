@@ -93,14 +93,15 @@
           </header>
           <section class="modal-card-body">
 
-            <div class="columns">
+            <div v-if="info.info_selection" class="columns">
               <div class="column is-one-third">
                 <div class="image">
-                  <img v-if="info.info_selection" :src="get_image(info.info_selection)" alt="">
+                  <img v-if="games.info[info.info_selection].image" :src="`./assets/images/info/${info.info_selection}.jpg`" alt="">
+                  <img v-else :src="get_image(info.info_selection)" alt="">
                 </div>
               </div>
               <div class="column">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                {{games.info[info.info_selection].text}}
               </div>
             </div>
           </section>
@@ -205,7 +206,7 @@
                     @click="toggle_fake_eliminated(n)"
                   >
                     <img :src="get_image(n)" alt="">
-                    <a  type="button" class="num-info" name="button" @click.stop="get_info(n)">
+                    <a v-if="games.info[n]"  type="button" class="num-info" name="button" @click.stop="get_info(n)">
                       <div class="icon">
                         <i class="fas fa-info-circle"></i>
                       </div>
@@ -223,7 +224,7 @@
                     }"
                     :style="{'animation-iteration-count': !game_deck.tada || 'infinite'}"
                     >
-                    <img :src="`./assets/images/${game.mode}/${current}.png`" alt="right guess">
+                    <img :src="`./assets/images/numbers/${current}.png`" alt="right guess">
                   </div>
                 </div>
 
