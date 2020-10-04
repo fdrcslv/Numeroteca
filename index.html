@@ -142,7 +142,7 @@
           </div>
         </nav>
       </div>
-      <div class="hero-body">
+      <div class="hero-body is-paddingless">
         <template v-if="phases.welcome">
           <div class="container">
           <div class="columns is-centered">
@@ -204,8 +204,9 @@
           </div>
         </template>
         <template v-else-if="phases.gameplay">
+          <div class="container">
           <div class="columns is-centered" style="min-width: 100%;">
-            <div :class="{'column':true, 'is-11 is-10-fullhd':current_numbers.length>3, 'is-7':current_numbers.length<=3}">
+            <div :class="{'column':true, 'is-10 is-10-fullhd':current_numbers.length>3, 'is-7':current_numbers.length<=3}">
               <div v-if="current_numbers.length > 1" class="grid-container animate__animated animate__fadeIn animate__slow" :style="{'grid-template-columns': get_grid}">
                   <div v-for="n in current_numbers"
                     :class="{
@@ -249,6 +250,7 @@
               </div>
             </div>
           </div>
+        </div>
         </template>
       </div>
       <!-- Hero footer: will stick at the bottom -->
