@@ -11,7 +11,7 @@ var app = new Vue({
     images_root: "assets/images/",
     chosing_deck:{
       card_list:[],
-      card_picked:'',
+      card_picked:false,
       picked:false,
       closed:true
     },
@@ -340,6 +340,34 @@ var app = new Vue({
     get_z_index:function(){
       return Math.floor(Math.random()*10);
     },
+    get_translation2: function(index, number_of_cards){
+      if (!this.chosing_deck.closed && this.chosing_deck.picked){
+        return {
+          'transform':'translate(0,0)',
+          'transition-delay':'1s',
+          'transition': 'all ease 0.5s',
+        }
+      } else if (!this.chosing_deck.closed && !this.chosing_deck.picked){
+        sh = window.innerHeight;
+        r = (sh*0.4) - (60/2*7/5);
+        tx = -r*Math.sin(index*2*Math.PI/number_of_cards);
+        ty = r*Math.cos(index*2*Math.PI/number_of_cards);
+        rotation = index*360/number_of_cards;
+
+        return {
+          'transform':`translate(${tx}px,${ty}px) rotate(${rotation}deg)`,
+          'transform-origin':'center',
+          'transition': 'all ease 0.5s',
+        }
+      } else {
+        return {
+          'transform':`translate(0,0) scale(3)`,
+          'transform-origin':'center',
+          'transition-delay':'1s',
+          'transition': 'all ease 0.5s',
+        }
+      }
+    },
     get_translation: function(i, j){
       if (!this.chosing_deck.closed && this.chosing_deck.picked){
         return {
@@ -363,14 +391,14 @@ var app = new Vue({
     pick_question: function(){
 
     },
-    pick_mistery: function(i,j){
+    pick_mistery: function(n){
       if(!this.chosing_deck.closed){
         this.chosing_deck.picked = false;
       } else {
         this.chosing_deck.picked = true;
         // this.game.picked  = Math.floor(Math.random() * this.games[this.game.mode].games.length);
         // this.game.picked = 2;
-        this.chosing_deck.card_picked = `${i}${j}`
+        this.chosing_deck.card_picked = n
       }
     },
     start: function(mode){

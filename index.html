@@ -166,28 +166,41 @@
           </div>
         </template>
         <template v-else-if="phases.chosing_for_you">
+          <div class="container">
           <div class="columns is-centered">
-            <div class="column is-12 is-10-fullhd">
-              <div v-for="i in Array.from(Array(3).keys())" class="columns">
+            <div class="column is-12 is-10-fullhd columns is-centered">
+              <div class="column is-narrow" style="height:80vh;">
+                <div style="transform: translate(0, 30vh); width: 2px; height: 2px; transform-origin: center; background: black;">
+                  <div class="" v-for="n in Array.from(Array(30).keys())" style="position:absolute; width:60px;" :style="get_translation2(n,30)">
+                    <!-- <div @click="chosing_deck.closed=!chosing_deck.closed; pick_mistery(n)" :style="{'width':'10px', 'height':'20px', 'background': 'rgb('+n*255/30+',100,100)' }"></div> -->
+                    <img src="./assets/images/back/0.png" style="width:80px;" alt=""
+                    @click="chosing_deck.closed=!chosing_deck.closed; pick_mistery(n)"
+                    :class="{'num num-has-shadow': true, 'animate__animated animate__tada glow-right': chosing_deck.card_picked === n}"
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div v-for="i in Array.from(Array(3).keys())" class="columns">
                 <div v-for="j in Array.from({length: 10}, (_, i) => i + 1)" class="column" :style="get_translation(j,i)">
                   <img @click="chosing_deck.closed=!chosing_deck.closed; pick_mistery(i, j)" :class="{'num num-has-shadow': true, 'animate__animated animate__bounce glow-right': chosing_deck.card_picked == `${i}${j}`}" src="./assets/images/back/0.png" alt="">
                 </div>
-              </div>
-              <div class="columns is-centered is-marginless">
-                <div class="column is-7 has-text-centered">
-                    <button v-if="chosing_deck.closed && !chosing_deck.picked" type="button" name="button" class="button is-large">Clicca sul mazzo!</button>
-                    <button v-if="!chosing_deck.closed && !chosing_deck.picked" type="button" name="button" class="button is-large">Seleziona una carta misteriosa</button>
-                    <template v-else-if="chosing_deck.closed && chosing_deck.picked">
-                      <div class="buttons is-centered">
-                        <button type="button" name="button" class="button is-success is-large" @click="toggle_phase('gameplay'); pick_game(0);">Pronti</button>
-                        <button type="button" name="button" class="button is-danger is-large" @click="toggle_phase('gameplay'); pick_game(1);">Partenza</button>
-                        <button type="button" name="button" class="button is-warning is-large" @click="toggle_phase('gameplay'); pick_game(2)">Via!</button>
-                      </div>
-                    </template>
-                </div>
-              </div>
+              </div> -->
             </div>
-
+          </div>
+          <div class="columns is-centered is-marginless">
+            <div class="column is-7 has-text-centered">
+                <button v-if="chosing_deck.closed && !chosing_deck.picked" type="button" name="button" class="button is-large">Clicca sul mazzo!</button>
+                <button v-if="!chosing_deck.closed && !chosing_deck.picked" type="button" name="button" class="button is-large">Seleziona una carta misteriosa</button>
+                <template v-else-if="chosing_deck.closed && chosing_deck.picked">
+                  <div class="buttons is-centered">
+                    <button type="button" name="button" class="button is-success is-large" @click="toggle_phase('gameplay'); pick_game(0);">Pronti</button>
+                    <button type="button" name="button" class="button is-danger is-large" @click="toggle_phase('gameplay'); pick_game(1);">Partenza</button>
+                    <button type="button" name="button" class="button is-warning is-large" @click="toggle_phase('gameplay'); pick_game(2)">Via!</button>
+                  </div>
+                </template>
+            </div>
+          </div>
           </div>
         </template>
         <template v-else-if="phases.gameplay">
