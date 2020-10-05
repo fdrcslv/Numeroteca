@@ -79,11 +79,14 @@ var app = new Vue({
       is_natural_and_odd: arg =>[[],  "È un numero naturale pari?"],
       is_made_of_n_significant_digits: arg => [[arg], `È composto da ${arg} cifr${arg==1 ? 'a':'e'} significativ${arg==1 ? 'a':'e'}?`],
       is_even_and_multiple_of: arg => [[arg], `È un numero pari multiplo di ${arg}?`],
-      is_bigger_then: arg => [[arg], `È maggiore di ${arg}`],
+      is_bigger_then: arg => [[arg], `È maggiore di ${arg}?`],
       is_current_year: arg => [[], `È l'anno in cui ci troviamo?`],
       is_bigger_then_teacher: arg => [[], 'È un numero più grande dell’età della vostra insegnante?'],
       is_french_card_deck: arg => [[], 'È il numero di carte di un seme in un mazzo di carte completo?'],
-      has_digits_equal: arg => [[], 'Contiene almeno due cifre uguali tra di loro?']
+      has_digits_equal: arg => [[], 'Contiene almeno due cifre uguali tra di loro?'],
+      is_crease_game: arg => [[], 'Elimina i numeri risultanti dal gioco: LE PIEGHE DI CARTA'],
+      is_month_or_days: arg => [[], "È il numero di mesi nell'anno o dei giorni nella settimana?"],
+      roman_numeral_contains: arg => [arg, `Espresso in numeri romani, contiene ${this.app.print_list(arg, ', ', ',', ' ')}`]
     },
     star_numbers:{
       pi:{
@@ -143,8 +146,19 @@ var app = new Vue({
     need_repr: new Set(['contains_digit',]),
     needs_key: new Set(['is_irrational', 'is_algebric', 'is_transcendental', 'is_fraction', 'is_phisical_constant']),
     check_functions: {
+        roman_numeral_contains: function(n, ...matches){
+          var ROMAN = this.app.romanize(n);
+          const is_contained = (current) => ROMAN.match(current) != null
+          return matches.every(is_contained);
+        },
+        is_crease_game: function(n){
+          var creases = new Set([1,2,4,8,16])
+          return creases.has(n)
+        },
+        is_month_or_days: function(n){
+          return (n == 12 || n == 7);
+        },
         is_natural: function(n){
-          console.log(this);
           return this.app.check_functions.has_sign(n, 1) || n == 0
         },
         is_real: function(){
@@ -195,10 +209,10 @@ var app = new Vue({
           return matches.every(is_contained)
         },
         has_length: function(n, l){
-          return n.toString().length == l
+          return n.toString().replace('-','').length == l
         },
         has_length_or_more: function(n, l){
-          return n.toString().length >= l
+          return n.toString().replace('-','').length >= l
         },
         has_sign: function(n, sign){
           //sign is to be passed as 1 or -1
@@ -280,11 +294,11 @@ var app = new Vue({
         },
         is_natural_and_even: function(n){
           var chf = this.app.check_functions;
-          return chf.is_natural(n) && chf.is_multiple_of(n, 2)
+          return (chf.has_sign(n, 1) || n == 0) && chf.is_multiple_of(n, 2)
         },
         is_natural_and_odd: function(n){
           var chf = this.app.check_functions;
-          return chf.is_natural(n) && chf.is_odd()
+          return (chf.has_sign(n, 1) || n == 0) && chf.is_odd()
         },
         is_made_of_n_significant_digits: function(n, d){
           return n.toString().split('.')[0].length == d
@@ -326,6 +340,19 @@ var app = new Vue({
    xhttp.send()
   },
   methods:{
+    romanize: function(num) {
+        if (isNaN(num))
+            return NaN;
+        var digits = String(+num).split(""),
+            key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
+                   "","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
+                   "","I","II","III","IV","V","VI","VII","VIII","IX"],
+            roman = "",
+            i = 3;
+        while (i--)
+            roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+        return Array(+digits.join("") + 1).join("M") + roman;
+    },
     _display_qst:function(){
       var root = this;
       window.setTimeout(function(){
@@ -520,12 +547,14 @@ var app = new Vue({
 
     },
     get_image: function(n){
-      return this.images_root +
+      var image =  this.images_root +
       `numbers/` +
       n.toString()
-        .replace('.','')
+        .replace('.','point')
         .replace('/', 'over') +
       '.png'
+      console.log(image);
+      return image
     },
     delay: function(n){
       if(this.game_deck.is_eliminating){

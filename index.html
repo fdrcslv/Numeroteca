@@ -85,7 +85,8 @@
           'modal-card animate__animated':true,
           'animate__fadeInDown animate__faster': info.number_info && !info.is_hiding_info,
           'animate__fadeOutUp animated_faster':info.is_hiding_info
-          }">
+          }"
+          style="width:65% !important; height:70vh !important">
           <header class="modal-card-head">
             <p class="modal-card-title">Informazioni</p>
             <button class="delete" aria-label="close" @click="get_info()"></button>
@@ -99,7 +100,7 @@
                   <img v-else :src="get_image(info.info_selection)" alt="">
                 </div>
               </div>
-              <div class="column">
+              <div class="column is-size-5">
                 {{games.info[info.info_selection].text}}
               </div>
             </div>
@@ -224,7 +225,7 @@
                         <i class="fas fa-info-circle"></i>
                       </div>
                     </a>
-                    <!-- <span style="position:absolute;">{{n}}</span> -->
+                    <span style="position:absolute;">{{n}}</span>
                   </div>
               </div>
               <div v-else class="columns is-centered is-vcentered">
