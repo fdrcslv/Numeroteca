@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.0/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
-    <link rel="stylesheet" href="./assets/custom.css?v=2.6">
+    <link rel="stylesheet" href="./assets/custom.css?v=2.7">
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500&display=swap" rel="stylesheet">
   </head>
   <body style="font-family: 'Rubik', sans-serif;">
@@ -96,7 +96,7 @@
             <div v-if="info.info_selection" class="columns">
               <div class="column is-one-third">
                 <div class="image">
-                  <img v-if="games.info[info.info_selection].image" :src="`./assets/images/info/${info.info_selection}.jpg`" alt="">
+                  <img v-if="games.info[info.info_selection].image" :src="`./assets/images/info/${games.info[info.info_selection].image}`" alt="">
                   <img v-else :src="get_image(info.info_selection)" alt="">
                 </div>
               </div>
@@ -273,5 +273,5 @@
     </div>
     </section>
   </body>
-  <script src="./index.js?v=2.6"></script>
+  <script src="./index.js?v=2.7"></script>
 </html>

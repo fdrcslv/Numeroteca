@@ -336,7 +336,7 @@ var app = new Vue({
        }
      };
 
-   xhttp.open("GET", "assets/games.json?v=2.6", true);
+   xhttp.open("GET", "assets/games.json?v=2.7", true);
    xhttp.send()
   },
   methods:{
@@ -546,13 +546,13 @@ var app = new Vue({
       }, 1000);
 
     },
-    get_image: function(n){
+    get_image: function(n, extension='.png'){
       var image =  this.images_root +
       `numbers/` +
       n.toString()
         .replace('.','point')
         .replace('/', 'over') +
-      '.png'
+      extension
       console.log(image);
       return image
     },
