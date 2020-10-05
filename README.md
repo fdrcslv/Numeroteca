@@ -87,6 +87,8 @@ These are the currentlòy suported questions, for integers, decimal, fractions, 
 * is_made_of_n_significant_digits(n, d)
 * is_even_and_multiple_of(n, m)
 
+And many more!
+
 ### 2.2 Question formatting in games.json
 To instruct the app to ask a question, just pick a question from the list and write it in the ```questions``` list parameter of the game. If
 a question needs am additional parameter (i.e. is_multiple_of) the string will be 
@@ -128,7 +130,7 @@ File names for the number cards are the same as the number they represent: 1.jpg
 
 In some cases we follow rules of substitution:
 
-Numbers like 0.4 map to a filename like 04.jpeg
+Numbers like 0.4 map to a filename like 0point4.jpeg
 
 Numbers like 0.33333333... map to 03p.jpeg
 
