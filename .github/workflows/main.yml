@@ -1,0 +1,25 @@
+name: Pull repository
+
+#on: [push]
+on:
+  push:
+    branches: [ master ]
+    
+jobs:
+  clone:
+    name: Clone
+    runs-on: ubuntu-latest
+    env: 
+      REMOTE_DIR: /home/webmaster/git/Numeroteca
+      REMOTE_USER: webmaster
+      REMOTE_HOST: prenotazioni.fosforoscienza.it
+    steps:
+    - name: Setup SSH
+      uses: garygrossgarten/github-action-ssh@release
+      with:
+        command: |
+          cd ${{ env.REMOTE_DIR }}
+          git pull
+        host: ${{ env.REMOTE_HOST }}
+        username: ${{ env.REMOTE_USER }}
+        privateKey: ${{ secrets.SSH_PRIVATE_KEY}}
