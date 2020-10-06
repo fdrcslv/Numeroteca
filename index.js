@@ -82,7 +82,7 @@ var app = new Vue({
       is_bigger_then: arg => [[arg], `È maggiore di ${arg}?`],
       is_current_year: arg => [[], `È l'anno in cui ci troviamo?`],
       is_bigger_then_teacher: arg => [[], 'È un numero più grande dell’età della vostra insegnante?'],
-      is_french_card_deck: arg => [[], 'È il numero di carte di un seme in un mazzo di carte completo?'],
+      is_french_card_deck: arg => [[], 'È il numero di carte di un seme in un mazzo di carte da poker completo?'],
       has_digits_equal: arg => [[], 'Contiene almeno due cifre uguali tra di loro?'],
       is_crease_game: arg => [[], 'Elimina i numeri risultanti dal gioco: LE PIEGHE DI CARTA'],
       is_month_or_days: arg => [[], "È il numero di mesi nell'anno o dei giorni nella settimana?"],
@@ -335,11 +335,49 @@ var app = new Vue({
         root.games = JSON.parse(this.responseText)
        }
      };
-
    xhttp.open("GET", "assets/games.json?v=2.7", true);
    xhttp.send()
   },
   methods:{
+    reset:function(){
+      this.game = {
+        mode:false,
+        picked: 0,
+        answers:[],
+      };
+      this.chosing_deck = {
+        card_list:[],
+        card_picked:false,
+        picked:false,
+        closed:true
+      };
+      this.question_deck = {
+        visible: false,
+        card_picked: null,
+        picked:false,
+        container_class:'question-picker-open',
+      };
+      this.game_deck = {
+        is_eliminating:false,
+        checked: false,
+        tada:true
+      };
+      this.phases = {
+        welcome:true,
+        chosing_for_you:false,
+        gameplay: false,
+      };
+      this.info = {
+        number_info:false,
+        is_hiding_info:false,
+        info_selection:false,
+      };
+      this.passes_test = false;
+      this.eliminated = new Set();
+      this.fake_eliminated =  new Set();
+      this.current_numbers = [];
+      this.current_question = 0;
+    },
     romanize: function(num) {
         if (isNaN(num))
             return NaN;
@@ -368,13 +406,17 @@ var app = new Vue({
       return Math.floor(Math.random()*10);
     },
     get_translation2: function(index, number_of_cards){
-      if (!this.chosing_deck.closed && this.chosing_deck.picked){
-        return {
-          'transform':'translate(0,0)',
-          'transition-delay':'1s',
-          'transition': 'all ease 0.5s',
-        }
-      } else if (!this.chosing_deck.closed && !this.chosing_deck.picked){
+      // if (!this.chosing_deck.closed){
+      //   //&& this.chosing_deck.picked
+      //   return {
+      //     'transform':'translate(0,0)',
+      //     'transition-delay':'1s',
+      //     'transition': 'all ease 0.5s',
+      //   }
+      // }
+      console.log(this.chosing_deck.closed);
+      if (!this.chosing_deck.closed){
+        //&& !this.chosing_deck.picked
         sh = window.innerHeight;
         r = (sh*0.4) - (60/2*7/5);
         tx = -r*Math.sin(index*2*Math.PI/number_of_cards);
@@ -415,10 +457,7 @@ var app = new Vue({
         }
       }
     },
-    pick_question: function(){
-
-    },
-    pick_mistery: function(n){
+    pick_mistery_old: function(n){
       if(!this.chosing_deck.closed){
         this.chosing_deck.picked = false;
       } else {
@@ -428,7 +467,26 @@ var app = new Vue({
         this.chosing_deck.card_picked = n
       }
     },
-    start: function(mode){
+    pick_mistery: function(n){
+      console.log('pick', this.chosing_deck.closed);
+      if(this.chosing_deck.closed){
+        this.chosing_deck.picked = false;
+      } else {
+        this.chosing_deck.picked = true;
+        // this.game.picked  = Math.floor(Math.random() * this.games[this.game.mode].games.length);
+        // this.game.picked = 2;
+        this.chosing_deck.card_picked = n
+      }
+      console.log('click',this.chosing_deck.closed);
+      if(this.chosing_deck.closed){
+        this.chosing_deck.closed = false;
+      }
+      console.log('now',this.chosing_deck.closed);
+    },
+    start: function(mode, restart){
+      if(restart){
+        this.reset();
+      }
       this.toggle_phase('chosing_for_you')
       this.game_deck.is_eliminating=false;
       this.game.mode = mode;
@@ -442,8 +500,7 @@ var app = new Vue({
       this.current_question = 0
     },
     back: function(){
-      this.phases.gameplay = false;
-      this.current_numbers = [];
+      this.toggle_phase('welcome');
     },
     pick_game: function(g){
       this.game.picked = g;

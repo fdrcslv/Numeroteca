@@ -110,7 +110,7 @@
       <div class="hero-head">
         <nav class="navbar">
           <div class="container">
-            <div class="navbar-brand animate__animated animate__fadeInLeft">
+            <div class="navbar-brand animate__animated animate__fadeInLeft" @click="reset">
               <a class="navbar-item" style="width: 56px;padding: 5px;">
                 <img src="./assets/images/logo-stroked.png" alt="Logo" style="max-height: 56px">
               </a>
@@ -123,7 +123,7 @@
             <div v-if="phases.gameplay" id="navbarMenuHeroA" class="navbar-menu animate__animated animate__fadeInDown">
               <div class="navbar-end">
                 <span class="navbar-item">
-                  <a class="button" @click="back">
+                  <a class="button" @click="reset">
                     <span class="icon">
                       <i class="fas fa-arrow-left"></i>
                     </span>
@@ -131,7 +131,7 @@
                   </a>
                 </span>
                 <span class="navbar-item">
-                  <a class="button" @click="start(game.mode)">
+                  <a class="button" @click="start(game.mode, true)">
                     <span class="icon">
                       <i class="fas fa-redo-alt"></i>
                     </span>
@@ -160,7 +160,7 @@
               <div class="buttons are-medium is-centered animate__animated animate__fadeInUp">
                 <button :class="{'button is-primary is-rounded':true, 'is-loading':!games_loaded}" @click="start('easy')"></button>
                 <button :class="{'button is-warning is-rounded':true, 'is-loading':!games_loaded}" @click="start('medium')"></button>
-                <button :class="{'button is-danger is-rounded':true, 'is-loading':!games_loaded}" @click="start('hard')"></button>
+                <button :class="{'button is-danger is-rounded':true, 'is-loading':!games_loaded}"></button>
               </div>
             </div>
           </div>
@@ -175,11 +175,20 @@
                   <div class="" v-for="n in Array.from(Array(30).keys())" style="position:absolute; width:60px;" :style="get_translation2(n,30)">
                     <!-- <div @click="chosing_deck.closed=!chosing_deck.closed; pick_mistery(n)" :style="{'width':'10px', 'height':'20px', 'background': 'rgb('+n*255/30+',100,100)' }"></div> -->
                     <img src="./assets/images/back/0.png" style="width:80px;" alt=""
-                    @click="chosing_deck.closed=!chosing_deck.closed; pick_mistery(n)"
+                    @click="pick_mistery(n)"
                     :class="{'num num-has-shadow': true, 'animate__animated animate__tada glow-right': chosing_deck.card_picked === n}"
                     >
                   </div>
                 </div>
+              </div>
+              <div class="column is-7 has-text-centered" style="position: absolute;top: 30vh;margin-left: 30px;">
+                <template v-if="chosing_deck.picked">
+                  <div class="buttons is-centered animate__animated animate__fadeIn">
+                    <button type="button" name="button" class="button is-success" @click="toggle_phase('gameplay'); pick_game(0);">Pronti</button>
+                    <button type="button" name="button" class="button is-danger" @click="toggle_phase('gameplay'); pick_game(1);">Partenza</button>
+                    <button type="button" name="button" class="button is-warning" @click="toggle_phase('gameplay'); pick_game(2)">Via!</button>
+                  </div>
+                </template>
               </div>
 
               <!-- <div v-for="i in Array.from(Array(3).keys())" class="columns">
@@ -190,23 +199,16 @@
             </div>
           </div>
           <div class="columns is-centered is-marginless">
-            <div class="column is-7 has-text-centered">
+            <div class="column is-7 has-text-centered" style="min-height:60px;">
                 <button v-if="chosing_deck.closed && !chosing_deck.picked" type="button" name="button" class="button is-large">Clicca sul mazzo!</button>
                 <button v-if="!chosing_deck.closed && !chosing_deck.picked" type="button" name="button" class="button is-large">Seleziona una carta misteriosa</button>
-                <template v-else-if="chosing_deck.closed && chosing_deck.picked">
-                  <div class="buttons is-centered">
-                    <button type="button" name="button" class="button is-success is-large" @click="toggle_phase('gameplay'); pick_game(0);">Pronti</button>
-                    <button type="button" name="button" class="button is-danger is-large" @click="toggle_phase('gameplay'); pick_game(1);">Partenza</button>
-                    <button type="button" name="button" class="button is-warning is-large" @click="toggle_phase('gameplay'); pick_game(2)">Via!</button>
-                  </div>
-                </template>
             </div>
           </div>
           </div>
         </template>
         <template v-else-if="phases.gameplay">
           <div class="container">
-          <div class="columns is-centered" style="min-width: 100%;">
+          <div class="columns is-centered animate__animated animate__fadeIn" style="min-width: 100%;">
             <div :class="{'column':true, 'is-10 is-10-fullhd':current_numbers.length>3, 'is-7':current_numbers.length<=3}">
               <div v-if="current_numbers.length > 1" class="grid-container animate__animated animate__fadeIn animate__slow" :style="{'grid-template-columns': get_grid}">
                   <div v-for="n in current_numbers"
