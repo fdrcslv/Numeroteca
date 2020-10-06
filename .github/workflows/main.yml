@@ -1,7 +1,10 @@
 name: Pull repository
 
-on: [push]
-
+#on: [push]
+on:
+  push:
+    branches: [ master ]
+    
 jobs:
   clone:
     name: Clone
