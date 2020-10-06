@@ -11,7 +11,7 @@ var app = new Vue({
     images_root: "assets/images/",
     chosing_deck:{
       card_list:[],
-      card_picked:'',
+      card_picked:false,
       picked:false,
       closed:true
     },
@@ -79,11 +79,14 @@ var app = new Vue({
       is_natural_and_odd: arg =>[[],  "È un numero naturale pari?"],
       is_made_of_n_significant_digits: arg => [[arg], `È composto da ${arg} cifr${arg==1 ? 'a':'e'} significativ${arg==1 ? 'a':'e'}?`],
       is_even_and_multiple_of: arg => [[arg], `È un numero pari multiplo di ${arg}?`],
-      is_bigger_then: arg => [[arg], `È maggiore di ${arg}`],
+      is_bigger_then: arg => [[arg], `È maggiore di ${arg}?`],
       is_current_year: arg => [[], `È l'anno in cui ci troviamo?`],
       is_bigger_then_teacher: arg => [[], 'È un numero più grande dell’età della vostra insegnante?'],
       is_french_card_deck: arg => [[], 'È il numero di carte di un seme in un mazzo di carte completo?'],
-      has_digits_equal: arg => [[], 'Contiene almeno due cifre uguali tra di loro?']
+      has_digits_equal: arg => [[], 'Contiene almeno due cifre uguali tra di loro?'],
+      is_crease_game: arg => [[], 'Elimina i numeri risultanti dal gioco: LE PIEGHE DI CARTA'],
+      is_month_or_days: arg => [[], "È il numero di mesi nell'anno o dei giorni nella settimana?"],
+      roman_numeral_contains: arg => [arg, `Espresso in numeri romani, contiene ${this.app.print_list(arg, ', ', ',', ' ')}`]
     },
     star_numbers:{
       pi:{
@@ -143,8 +146,19 @@ var app = new Vue({
     need_repr: new Set(['contains_digit',]),
     needs_key: new Set(['is_irrational', 'is_algebric', 'is_transcendental', 'is_fraction', 'is_phisical_constant']),
     check_functions: {
+        roman_numeral_contains: function(n, ...matches){
+          var ROMAN = this.app.romanize(n);
+          const is_contained = (current) => ROMAN.match(current) != null
+          return matches.every(is_contained);
+        },
+        is_crease_game: function(n){
+          var creases = new Set([1,2,4,8,16])
+          return creases.has(n)
+        },
+        is_month_or_days: function(n){
+          return (n == 12 || n == 7);
+        },
         is_natural: function(n){
-          console.log(this);
           return this.app.check_functions.has_sign(n, 1) || n == 0
         },
         is_real: function(){
@@ -195,10 +209,10 @@ var app = new Vue({
           return matches.every(is_contained)
         },
         has_length: function(n, l){
-          return n.toString().length == l
+          return n.toString().replace('-','').length == l
         },
         has_length_or_more: function(n, l){
-          return n.toString().length >= l
+          return n.toString().replace('-','').length >= l
         },
         has_sign: function(n, sign){
           //sign is to be passed as 1 or -1
@@ -280,11 +294,11 @@ var app = new Vue({
         },
         is_natural_and_even: function(n){
           var chf = this.app.check_functions;
-          return chf.is_natural(n) && chf.is_multiple_of(n, 2)
+          return (chf.has_sign(n, 1) || n == 0) && chf.is_multiple_of(n, 2)
         },
         is_natural_and_odd: function(n){
           var chf = this.app.check_functions;
-          return chf.is_natural(n) && chf.is_odd()
+          return (chf.has_sign(n, 1) || n == 0) && chf.is_odd()
         },
         is_made_of_n_significant_digits: function(n, d){
           return n.toString().split('.')[0].length == d
@@ -322,10 +336,23 @@ var app = new Vue({
        }
      };
 
-   xhttp.open("GET", "assets/games.json?v=2.6", true);
+   xhttp.open("GET", "assets/games.json?v=2.7", true);
    xhttp.send()
   },
   methods:{
+    romanize: function(num) {
+        if (isNaN(num))
+            return NaN;
+        var digits = String(+num).split(""),
+            key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
+                   "","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
+                   "","I","II","III","IV","V","VI","VII","VIII","IX"],
+            roman = "",
+            i = 3;
+        while (i--)
+            roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+        return Array(+digits.join("") + 1).join("M") + roman;
+    },
     _display_qst:function(){
       var root = this;
       window.setTimeout(function(){
@@ -339,6 +366,34 @@ var app = new Vue({
     },
     get_z_index:function(){
       return Math.floor(Math.random()*10);
+    },
+    get_translation2: function(index, number_of_cards){
+      if (!this.chosing_deck.closed && this.chosing_deck.picked){
+        return {
+          'transform':'translate(0,0)',
+          'transition-delay':'1s',
+          'transition': 'all ease 0.5s',
+        }
+      } else if (!this.chosing_deck.closed && !this.chosing_deck.picked){
+        sh = window.innerHeight;
+        r = (sh*0.4) - (60/2*7/5);
+        tx = -r*Math.sin(index*2*Math.PI/number_of_cards);
+        ty = r*Math.cos(index*2*Math.PI/number_of_cards);
+        rotation = index*360/number_of_cards;
+
+        return {
+          'transform':`translate(${tx}px,${ty}px) rotate(${rotation}deg)`,
+          'transform-origin':'center',
+          'transition': 'all ease 0.5s',
+        }
+      } else {
+        return {
+          'transform':`translate(0,0) scale(3)`,
+          'transform-origin':'center',
+          'transition-delay':'1s',
+          'transition': 'all ease 0.5s',
+        }
+      }
     },
     get_translation: function(i, j){
       if (!this.chosing_deck.closed && this.chosing_deck.picked){
@@ -363,14 +418,14 @@ var app = new Vue({
     pick_question: function(){
 
     },
-    pick_mistery: function(i,j){
+    pick_mistery: function(n){
       if(!this.chosing_deck.closed){
         this.chosing_deck.picked = false;
       } else {
         this.chosing_deck.picked = true;
         // this.game.picked  = Math.floor(Math.random() * this.games[this.game.mode].games.length);
         // this.game.picked = 2;
-        this.chosing_deck.card_picked = `${i}${j}`
+        this.chosing_deck.card_picked = n
       }
     },
     start: function(mode){
@@ -491,13 +546,15 @@ var app = new Vue({
       }, 1000);
 
     },
-    get_image: function(n){
-      return this.images_root +
+    get_image: function(n, extension='.png'){
+      var image =  this.images_root +
       `numbers/` +
       n.toString()
-        .replace('.','')
+        .replace('.','point')
         .replace('/', 'over') +
-      '.png'
+      extension
+      console.log(image);
+      return image
     },
     delay: function(n){
       if(this.game_deck.is_eliminating){

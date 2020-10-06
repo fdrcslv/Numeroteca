@@ -5,11 +5,11 @@
       {
         "current":1,
         "questions":[
-          "is_multiple_of(10)",
+          "contains_digit(0)",
+          "is_month_or_days",
           "is_odd",
           "has_length(4)",
-          "contains_digit(9)",
-          "is_multiple_of(3)",
+          "is_bigger_then(100)",
           "contains_digit(1)",
           "is_made_of_n_digits_equal(2)",
           "is_lesser_than(10)"
@@ -51,9 +51,10 @@
         "questions":[
           "is_multiple_of(3)",
           "is_multiple_of(5)",
+          "is_crease_game",
           "is_odd",
           "contains_digit(1)",
-          "has_length(2)",
+          "roman_numeral_contains(X,V,I)",
           "is_made_of_n_digits_equal(2)"
         ]
       },
@@ -82,7 +83,7 @@
     ]
   },
   "hard":{
-    "numbers":[-10,-1,"-1/2","-0.3p",0,"2/3",1,1,5,2,3,3,14,"pi",4,5,6,7,8,9,10,12,15,17,20,22,50,100,1000,1991,2020,2021],
+    "numbers":[-10,-1,"-1/2","-0.3p",0,"2/3",1,1.5,2,3,3.14,"pi",4,5,6,7,8,9,10,12,15,17,20,22,50,100,1000,1991,2020,2021],
     "games":[
       {
         "current":12,
@@ -96,7 +97,6 @@
           "is_natural_and_even"
         ]
       }
-
     ]
   },
   "hard_plus":{
@@ -104,13 +104,36 @@
     "games":[]
   },
   "info":{
-    "3": {
+    "2": {
+      "text":"Piega un foglio a metà. Hai diviso il foglio in due parti. Piegalo ancora a metà altre tre volte. In quante parti hai diviso il foglio?"
+    },
+    "3":{
+      "text":"Quanti triangoli vedi in questa immagine?",
+      "image":"3.jpg"
+    },
+    "3a": {
       "text":"È il primo numero triangolare. Un numero è divisibile per 3 se la somma di tutte le sue cifre è pari a 3 o ad un suo multiplo. Il numero 345 è divisibile per tre infatti la somma delle cifre è: 3+4+5 =12",
       "image":true
+    },
+    "4": {
+      "text":"Quanti quadrati vedi in questa immagine?",
+      "image":"4.jpg"
+    },
+    "5":{
+      "text":"In natura è facile ritrovare i numeri, spesso sono dove meno ce lo aspettiamo. Ecco una nascosta presenza del numero 5, lo potete trovare ogni volta tagliate orizzontalmente una mela.",
+      "image":"5.png"
     },
     "6": {
       "text":"Euclide lo considerava il numero perfetto. Per i pitagorici il 6 rappresentava la stabilità e l’equilibrio. È al somma dei suoi fattori (1 + 2 + 3 = 6). È anche il prodotto dei suoi fattori (1 x 2 x 3 = 6)",
       "image":false
+    },
+    "7": {
+      "text":"In una fattoria ci sono sette animali, due mucche, due cavalli e tre galline. Quante zampe ci sono in tutto nella fattoria?",
+      "image":false
+    },
+    "8":{
+      "text":"La natura tesse strane trame. Ecco come la disposizione dell’Ananas spesso ci fa trovare i numeri 5 8 e 13.",
+      "image":"8.gif"
     },
     "10": {
       "text":"Per i pitagorici i 10 era “il numero del mondo” . È la base del sistema decimale. Oggi ha un grande significato legato allo sport del calcio e alla maglia di grandissimi giocatori: Maradona, Francesco Totti, Alessandro Del Piero, Lionel Messi per citarne alcuni.",
@@ -122,11 +145,11 @@
     },
     "1492": {
       "text":"È un numero pari! Il 1492 come anno è la data della scoperta dell'America considerata dagli storici la fine del Medioevo e la fine dell'Età moderna.",
-      "image":true
+      "image":"149.jpg"
     },
     "1969": {
       "text":"È un numero dispari. Nell’anno 1969 l'uomo sbarca sulla Luna: Neil Armstrong e Buzz Aldrin, sono i primi uomini a camminare sul suolo lunare con la missione spaziale Apollo 11",
-      "image":true
+      "image":"1969.jpg"
     }
   }
 }
