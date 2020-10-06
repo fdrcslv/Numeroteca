@@ -1,9 +1,6 @@
 name: Pull repository
 
-on:
-  push:
-      branches:
-        - main
+on: [push]
 
 jobs:
   clone:
