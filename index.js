@@ -428,7 +428,6 @@ var app = new Vue({
       //     'transition': 'all ease 0.5s',
       //   }
       // }
-      console.log(this.chosing_deck.closed);
       if (!this.chosing_deck.closed){
         //&& !this.chosing_deck.picked
         sh = window.innerHeight;
@@ -482,7 +481,6 @@ var app = new Vue({
       }
     },
     pick_mistery: function(n){
-      console.log('pick', this.chosing_deck.closed);
       if(this.chosing_deck.closed){
         this.chosing_deck.picked = false;
       } else {
@@ -491,11 +489,9 @@ var app = new Vue({
         // this.game.picked = 2;
         this.chosing_deck.card_picked = n
       }
-      console.log('click',this.chosing_deck.closed);
       if(this.chosing_deck.closed){
         this.chosing_deck.closed = false;
       }
-      console.log('now',this.chosing_deck.closed);
     },
     start: function(mode, restart){
       if(restart){
@@ -519,7 +515,6 @@ var app = new Vue({
     pick_game: function(g){
       this.game.picked = g;
       var qst = this.games[this.game.mode].games[this.game.picked].questions.length;
-      console.log(qst);
       this.question_deck.card_list = Array.from(Array(qst), (x, i)=> String.fromCharCode(i+65));
     },
     pick_question:function(q){
@@ -644,7 +639,6 @@ var app = new Vue({
         .replace('.','point')
         .replace('/', 'over') +
       extension
-      console.log(image);
       return image
     },
     delay: function(n){
@@ -682,11 +676,6 @@ var app = new Vue({
         if(hist.should_delete.length != hist.user_deleted.length){
           not_delete = hist.user_deleted.filter(el => ! new Set(hist.should_delete).has(el))
         }
-        console.log(  {
-            question: hist.question,
-            not_keep: not_keep,
-            not_delete: not_delete
-          });
         this.game.history_wrong.push(
           {
             question: hist.question,
