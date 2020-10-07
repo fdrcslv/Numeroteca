@@ -27,10 +27,10 @@
               </div>
             </div>
             <p class="level-item">
-              <template v-if="game_deck.checked">
+              <!-- <template v-if="game_deck.checked">
                 <p v-if="passes_test" class="is-size-3"> SI! <span class="icon has-text-primary"> <i class="fas fa-check"></i></span></p>
                 <p v-else class="is-size-3"> NO! <span class="icon has-text-danger"> <i class="fas fa-times"></i></span></p>
-              </template>
+              </template> -->
             </p>
             <!-- Right side -->
             <div class="level-right">
@@ -310,8 +310,8 @@
                     </div>
                     <div class="column is-narrow">
                       <p v-for="a, i in active_questions">{{a[2]}}
-                        <!-- <span v-if="game.answers[i]" class="is-size-3"> SI! <span class="icon has-text-primary"> <i class="fas fa-check"></i></span></span>
-                        <span v-else class="is-size-3"> NO! <span class="icon has-text-danger"> <i class="fas fa-times"></i></span></span> -->
+                        <span v-if="game.answers[i]" class="is-size-3"> SI! <span class="icon has-text-primary"> <i class="fas fa-check"></i></span></span>
+                        <span v-else class="is-size-3"> NO! <span class="icon has-text-danger"> <i class="fas fa-times"></i></span></span>
                       </p>
                     </div>
                   </div>
