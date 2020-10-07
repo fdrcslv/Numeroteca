@@ -3,10 +3,12 @@ var app = new Vue({
   el:'#app',
   data:{
     games:{},
+    sneaky:false,
     game:{
       mode:false,
       picked: 0,
       answers:[],
+      history:[]
     },
     images_root: "assets/images/",
     chosing_deck:{
@@ -38,55 +40,56 @@ var app = new Vue({
     },
     passes_test:false,
     eliminated:new Set(),
-    fake_eliminated: new Set(),
+    user_keep: new Set(),
     current_numbers:[],
     current_question:0,
+    dialog:false,
     print_list: function(a, d, f, l){
       return `${a.join(d).substring(0,a.join(d).lastIndexOf(f)) +
       ' e' +
       a.join(d).substring([a.join(d).lastIndexOf(l)])}`
     },
     question_collection:{
-      is_natural: arg => [[], "È un numero naturale?"],
-      is_real : arg => [[], "È un numero reale?"],
-      is_periodic: arg => [[], "È un numero periodico?"],
-      is_phisical_constant: arg => [[], "È una costante fisica?"],
-      is_irrational: arg => [[], "È un numero irrazionale?"],
-      is_algebric: arg => [[], "È un numero algebrico?"],
-      is_transcendental: arg => [[], "È un numero trascendente?"],
-      is_fraction  : arg => [[], "È una frazione?"],
-      is_odd: arg => [[], "È un numero dispari?"],
-      is_multiple_of: arg => [[arg], `È multiplo di ${arg}?`],
-      contains_digit: arg => [[arg], `Contiene il numero ${arg}?`],
-      contains_multiple_digits: arg => [arg, `Contiene le cifre ${this.app.print_list(arg, ', ', ',', ' ')}?`],
-      has_length: arg => [[arg], `Ha una lunghezza di ${arg} cifr${arg==1 ? 'a':'e'}?`],
-      has_length_or_more: arg => [[arg], `Ha una lunghezza di ${arg} cifr${arg==1 ? 'a':'e'} o più?`],
-      has_sign: arg => [[arg], `Ha segno ${arg.toString().split('')[0]} ?`],
-      is_integer: arg => [[], "È un numero intero?"],
-      is_palindrome: arg => [[], "È un numero palindromo?"],
-      is_lesser_than: arg => [[arg], `È un numero minore di ${arg}?`],
-      is_platonic: arg => [[], "È un numero corrispondente alle facce dei solidi platonici?"],
-      is_perfect: arg => [[], "È un numero perfetto?"],
-      is_power_of: arg => [[arg], `È una potenza di ${arg}?`],
-      is_fibonacci: arg => [[], "È un numero della serie di Fibonacci?"],
-      is_prime: arg => [[], "È un numero primo?"],
-      is_decimal: arg => [[], "È un numero decimale?"],
-      is_binary: arg => [[], "È un numero binario?"],
-      is_made_of_n_digits_equal: arg => [[arg], `È composto da ${arg} cifre uguali?`],
-      is_result_from_expression: arg => [[arg], `È il risultato della seguente espressione ${arg} ? `],
-      its_modulus_is_lesser_than: arg =>[[arg] `Il suo modulo è minore di ${arg}`],
-      is_natural_and_even: arg =>[[], "È un numero naturale dispari?"],
-      is_natural_and_odd: arg =>[[],  "È un numero naturale pari?"],
-      is_made_of_n_significant_digits: arg => [[arg], `È composto da ${arg} cifr${arg==1 ? 'a':'e'} significativ${arg==1 ? 'a':'e'}?`],
-      is_even_and_multiple_of: arg => [[arg], `È un numero pari multiplo di ${arg}?`],
-      is_bigger_then: arg => [[arg], `È maggiore di ${arg}?`],
-      is_current_year: arg => [[], `È l'anno in cui ci troviamo?`],
-      is_bigger_then_teacher: arg => [[], 'È un numero più grande dell’età della vostra insegnante?'],
-      is_french_card_deck: arg => [[], 'È il numero di carte di un seme in un mazzo di carte da poker completo?'],
-      has_digits_equal: arg => [[], 'Contiene almeno due cifre uguali tra di loro?'],
-      is_crease_game: arg => [[], 'Elimina i numeri risultanti dal gioco: LE PIEGHE DI CARTA'],
-      is_month_or_days: arg => [[], "È il numero di mesi nell'anno o dei giorni nella settimana?"],
-      roman_numeral_contains: arg => [arg, `Espresso in numeri romani, contiene ${this.app.print_list(arg, ', ', ',', ' ')}`]
+      is_natural: (no, arg) => [[], `${no} è un numero naturale`],
+      is_real : (no, arg) => [[], `${no} è un numero reale`],
+      is_periodic: (no, arg) => [[], `${no} è un numero periodico`],
+      is_phisical_constant: (no, arg) => [[], `${no} è una costante fisica`],
+      is_irrational: (no, arg) => [[], `${no} è un numero irrazionale`],
+      is_algebric: (no, arg) => [[], `${no} è un numero algebrico`],
+      is_transcendental: (no, arg) => [[], `${no} è un numero trascendente`],
+      is_fraction  : (no, arg) => [[], `${no} è una frazione`],
+      is_odd: (no, arg) => [[], `${no} è un numero dispari`],
+      is_multiple_of: (no, arg) => [[arg], `${no} è multiplo di ${arg}`],
+      contains_digit: (no, arg) => [[arg], `${no} contiene il numero ${arg}`],
+      contains_multiple_digits: (no, arg) => [arg, `${no} contiene tutte queste cifre ${this.app.print_list(arg, ', ', ',', ' ')}`],
+      has_length: (no, arg) => [[arg], `${no} ha una lunghezza di ${arg} cifr${arg==1 ? 'a':'e'}`],
+      has_length_or_more: (no, arg) => [[arg], `${no} ha una lunghezza di ${arg} cifr${arg==1 ? 'a':'e'} o più`],
+      has_sign: (no, arg) => [[arg], `${no} ha segno ${arg.toString().split('')[0]} `],
+      is_integer: (no, arg) => [[], `${no} è un numero intero`],
+      is_palindrome: (no, arg) => [[], `${no} è un numero palindromo`],
+      is_lesser_than: (no, arg) => [[arg], `${no} è un numero minore di ${arg}`],
+      is_platonic: (no, arg) => [[], `${no} è un numero corrispondente alle facce dei solidi platonici`],
+      is_perfect: (no, arg) => [[], `${no} è un numero perfetto`],
+      is_power_of: (no, arg) => [[arg], `${no} è una potenza di ${arg}`],
+      is_fibonacci: (no, arg) => [[], `${no} è un numero della serie di Fibonacci`],
+      is_prime: (no, arg) => [[], `${no} è un numero primo`],
+      is_decimal: (no, arg) => [[], `${no} è un numero decimale`],
+      is_binary: (no, arg) => [[], `${no} è un numero binario`],
+      is_made_of_n_digits_equal: (no, arg) => [[arg], `${no} è composto da ${arg} cifre uguali`],
+      is_result_from_expression: (no, arg) => [[arg], `${no} è il risultato della seguente espressione ${arg}  `],
+      its_modulus_is_lesser_than: (no, arg) =>[[arg] `il suo modulo ${no} è minore di ${arg}`],
+      is_natural_and_even: (no, arg) =>[[], `${no} è un numero naturale dispari`],
+      is_natural_and_odd: (no, arg) =>[[],  `${no} è un numero naturale pari`],
+      is_made_of_n_significant_digits: (no, arg) => [[arg], `${no} è composto da ${arg} cifr${arg==1 ? 'a':'e'} significativ${arg==1 ? 'a':'e'}`],
+      is_even_and_multiple_of: (no, arg) => [[arg], `${no} è un numero pari multiplo di ${arg}`],
+      is_bigger_then: (no, arg) => [[arg], `${no} è maggiore di ${arg}`],
+      is_current_year: (no, arg) => [[], `${no} è l'anno in cui ci troviamo`],
+      is_bigger_then_teacher: (no, arg) => [[], `${no} è un numero più grande dell’età della vostra insegnante`],
+      is_french_card_deck: (no, arg) => [[], `${no} è il numero di carte di un seme in un mazzo di carte da poker completo`],
+      has_digits_equal: (no, arg) => [[], `${no} contiene almeno due cifre uguali tra di loro`],
+      is_crease_game: (no, arg) => [[], 'Elimina i numeri risultanti dal gioco: LE PIEGHE DI CARTA'],
+      is_month_or_days: (no, arg) => [[], `${no} è il numero di mesi nell'anno o dei giorni nella settimana`],
+      roman_numeral_contains: (no, arg) => [arg, `espresso in numeri romani, ${no} contiene ${this.app.print_list(arg, ', ', ',', ' ')}`]
     },
     star_numbers:{
       pi:{
@@ -339,6 +342,13 @@ var app = new Vue({
    xhttp.send()
   },
   methods:{
+    ask: function(){
+      //funzione inutile lol
+      this.toggle_dialog();
+    },
+    toggle_dialog: function(){
+      this.dialog = !this.dialog;
+    },
     reset:function(){
       this.game = {
         mode:false,
@@ -374,7 +384,7 @@ var app = new Vue({
       };
       this.passes_test = false;
       this.eliminated = new Set();
-      this.fake_eliminated =  new Set();
+      this.user_keep =  new Set();
       this.current_numbers = [];
       this.current_question = 0;
     },
@@ -493,7 +503,7 @@ var app = new Vue({
       this.game_deck.tada= true;
       this.passes_test=false;
       this.eliminated=new Set();
-      this.fake_eliminated=new Set();
+      this.user_keep=new Set();
       this.game_deck.checked= false;
       this.current_numbers = JSON.parse(JSON.stringify(this.games[this.game.mode].numbers));
       // this.shuffle_array(this.current_numbers)
@@ -524,11 +534,11 @@ var app = new Vue({
             shuffled[j] = temp;
         }
     },
-    toggle_fake_eliminated: function(n){
-      if(this.fake_eliminated.has(n)){
-        this.fake_eliminated.delete(n)
+    toggle_user_keep: function(n){
+      if(this.user_keep.has(n)){
+        this.user_keep.delete(n)
       } else {
-        this.fake_eliminated.add(n)
+        this.user_keep.add(n)
       }
       this.$forceUpdate()
     },
@@ -563,11 +573,16 @@ var app = new Vue({
           this.eliminated = new Set(this.current_numbers.filter(el => filter_function(el, args)));
         }
     },
+    // delete_cards: function(){
+    //   this.checks()
+    // },
     checks: function(){
       var type = this.active_questions[this.current_question][0]
       var args = this.active_questions[this.current_question][1]
+      var current_answer = this.active_questions[this.current_question][3]
       var func = this.check_functions[type]
       this.game_deck.is_eliminating = true;
+      this.game_deck.checked = true;
       var root = this;
       function filter_function(el, args){
         var temp_el = el;
@@ -580,16 +595,31 @@ var app = new Vue({
         }
         return func(...[temp_el].concat(args))
       }
-      this.fake_eliminated = new Set()
+      root.eliminated = new Set(root.current_numbers.filter(el => !root.user_keep.has(el)));
+
+      var history_element = {
+        question: this.active_questions[this.current_question][2],
+        should_keep:[],
+        should_delete:[],
+        user_deleted: JSON.parse(JSON.stringify(Array.from(this.eliminated))),
+        user_kept: JSON.parse(JSON.stringify(Array.from(this.user_keep))),
+      }
+
       window.setTimeout(function () {
-        if(root.passes_test){
-          root.current_numbers = root.current_numbers.filter(el => filter_function(el, args));
+        if(current_answer){
+          history_element.should_keep = root.current_numbers.filter(el => filter_function(el, args));
+          history_element.should_delete = root.current_numbers.filter(el => !filter_function(el, args));
         } else {
-          root.current_numbers = root.current_numbers.filter(el => !filter_function(el, args));
+          history_element.should_keep = root.current_numbers.filter(el => !filter_function(el, args));
+          history_element.should_delete = root.current_numbers.filter(el => filter_function(el, args));
         }
+        root.game.history.push(history_element);
+        root.current_numbers = root.current_numbers.filter(el => root.user_keep.has(el));
+        root.user_keep = new Set()
+
         root.game_deck.checked = false;
         root.current_question = root.current_question+1
-        console.log(root.current_question >= root.questions.length);
+
         if(root.current_question >= root.questions.length){
           root.question_deck.visible = true;
           root.question_deck.picked = true;
@@ -682,7 +712,9 @@ var app = new Vue({
       var safe_expression = /([^0-9*/+().<>=-])/;
       for (let k in this.questions){
         var qst = this.questions[k];
-        var func = qst.split("(")[0];
+        var res = qst.split(':')[0] == 'YES';
+        qst = qst.split(':')[1]
+        var func = qst.split('(')[0]
         var arg;
 
         if(func == 'is_result_from_expression'){
@@ -701,7 +733,10 @@ var app = new Vue({
             arg = null
           }
         }
-        questions.push([func,].concat(this.question_collection[func](arg)))
+        var NO = (res ? '' : 'non ')
+        questions.push([func,].concat(this.question_collection[func](NO, arg)).concat([res]))
+        questions[questions.length -1][2] = questions[questions.length -1][2][0].toUpperCase() +
+            questions[questions.length -1][2].slice(1)
       }
       return questions
     },
@@ -714,9 +749,29 @@ var app = new Vue({
           root.game_deck.tada = false
         }, 1000)
 
-        return `${this.current} - Ecco il numero misterioso!`
+        return `Ecco il numero misterioso!`
       }
+    },
+    splat: function(){
+      var nums = this.current_numbers.length;
+      var iq = this.current_question;
+      var aq = this.active_questions.length - 1;
 
+      if(nums > 1){
+        if(iq > aq){
+          return true
+        } else {
+          return false
+        }
+      } else if(nums == 0){
+        return true
+      } else if(nums == 1){
+        if(this.current == this.current_numbers[0]){
+          return false;
+        } else {
+          return true;
+        }
+      }
     }
 
   },

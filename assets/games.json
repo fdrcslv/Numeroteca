@@ -5,40 +5,40 @@
       {
         "current":1,
         "questions":[
-          "contains_digit(0)",
-          "is_month_or_days",
-          "is_odd",
-          "has_length(4)",
-          "is_bigger_then(100)",
-          "contains_digit(1)",
-          "is_made_of_n_digits_equal(2)",
-          "is_lesser_than(10)"
+          "NOT:contains_digit(0)",
+          "NOT:is_month_or_days",
+          "YES:is_odd",
+          "NOT:has_length(4)",
+          "NOT:is_bigger_then(100)",
+          "YES:contains_digit(1)",
+          "NOT:is_made_of_n_digits_equal(2)",
+          "YES:is_lesser_than(10)"
         ]
       },
       {
         "current":2020,
         "questions":[
-          "has_length(3)",
-          "contains_digit(9)",
-          "contains_multiple_digits(2,3)",
-          "is_multiple_of(3)",
-          "is_multiple_of(2)",
-          "contains_digit(1)",
-          "is_bigger_then(10)",
-          "is_current_year"
+          "NOT:has_length(3)",
+          "NOT:contains_digit(9)",
+          "NOT:contains_multiple_digits(2,3)",
+          "NOT:is_multiple_of(3)",
+          "YES:is_multiple_of(2)",
+          "NOT:contains_digit(1)",
+          "YES:is_bigger_then(10)",
+          "YES:is_current_year"
         ]
       },
       {
         "current":13,
         "questions":[
-          "has_digits_equal",
-          "is_multiple_of(5)",
-          "is_bigger_then_teacher",
-          "is_multiple_of(3)",
-          "is_odd",
-          "contains_digit(1)",
-          "has_length(1)",
-          "is_french_card_deck"
+          "NOT:has_digits_equal",
+          "NOT:is_multiple_of(5)",
+          "NOT:is_bigger_then_teacher",
+          "NOT:is_multiple_of(3)",
+          "YES:is_odd",
+          "YES:contains_digit(1)",
+          "NOT:has_length(1)",
+          "YES:is_french_card_deck"
         ]
       }
     ]
@@ -49,35 +49,35 @@
       {
         "current":11,
         "questions":[
-          "is_multiple_of(3)",
-          "is_multiple_of(5)",
-          "is_crease_game",
-          "is_odd",
-          "contains_digit(1)",
-          "roman_numeral_contains(X,V,I)",
-          "is_made_of_n_digits_equal(2)"
+          "NOT:is_multiple_of(3)",
+          "NOT:is_multiple_of(5)",
+          "NOT:is_crease_game",
+          "YES:is_odd",
+          "YES:contains_digit(1)",
+          "NOT:roman_numeral_contains(X,V,I)",
+          "YES:is_made_of_n_digits_equal(2)"
         ]
       },
       {
         "current":3,
         "questions":[
-          "is_multiple_of(5)",
-          "contains_digit(1)",
-          "is_odd",
-          "has_length(1)",
-          "is_multiple_of(3)",
-          "is_result_from_expression(((5+3)*2 -10)/2)"
+          "NOT:is_multiple_of(5)",
+          "NOT:contains_digit(1)",
+          "YES:is_odd",
+          "YES:has_length(1)",
+          "YES:is_multiple_of(3)",
+          "YES:is_result_from_expression(((5+3)*2 -10)/2)"
         ]
       },
       {
         "current":27,
         "questions":[
-          "is_even_and_multiple_of(3)",
-          "contains_digit(3)",
-          "is_multiple_of(2)",
-          "has_length(2)",
-          "contains_digit(1)",
-          "is_multiple_of(3)"
+          "NOT:is_even_and_multiple_of(3)",
+          "NOT:contains_digit(3)",
+          "NOT:is_multiple_of(2)",
+          "YES:has_length(2)",
+          "NOT:contains_digit(1)",
+          "YES:is_multiple_of(3)"
         ]
       }
     ]
@@ -88,13 +88,13 @@
       {
         "current":12,
         "questions":[
-          "is_multiple_of(5)",
-          "has_length(4)",
-          "is_irrational",
-          "is_integer",
-          "has_length(2)",
-          "is_palindrome",
-          "is_natural_and_even"
+          "NOT:is_multiple_of(5)",
+          "NOT:has_length(4)",
+          "NOT:is_irrational",
+          "YES:is_integer",
+          "YES:has_length(2)",
+          "NOT:is_palindrome",
+          "YES:is_natural_and_even"
         ]
       }
     ]

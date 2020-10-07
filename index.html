@@ -19,9 +19,11 @@
             <!-- Left side -->
             <div class="level-left">
               <div class="level-item">
-              </div>
-              <div class="level-item">
-                <p class="is-size-3">{{current_question_content}}</p>
+                <div style="text-align: left">
+                  <p v-if="current_numbers.length > 1" class="heading is-size-7">Seleziona le carte che rispettano la seguente affermazione:</p>
+                  <p class="is-size-3">{{current_question_content}}</p>
+                </div>
+
               </div>
             </div>
             <p class="level-item">
@@ -42,22 +44,16 @@
                 </template>
                 <template v-else>
                   <a
-                  v-if="!game_deck.checked"
-                  class="button is-fullwidth is-warning"
+                  class="button animate__animated animate__fadeIn is-fullwidth is-success"
                   type="button" name="button"
-                  @click="check_current()">
-                  Mostra Risposta</a>
-                  <a
-                  v-else
-                  class="button is-fullwidth is-danger"
-                  type="button" name="button"
-                  @click="checks()">
-                  Elimina Carte</a>
+                  :disabled="dialog"
+                  @click="ask">
+                  Avanti</a>
                 </template>
               </p>
             </div>
           </nav>
-          <p v-if="!question_deck.picked" class="is-size-4">Seleziona una carta e scopri la domanda</p>
+          <p v-if="!question_deck.picked" class="is-size-4">Seleziona una carta e scopri un indizio</p>
           <div class="columns is-centered">
             <div :class="{'column':true,
               'is-12': (questions.length - current_question) > 4 ,
@@ -105,6 +101,29 @@
               </div>
             </div>
           </section>
+        </div>
+      </div>
+      <div :class="{'modal ':true, 'is-active':dialog}">
+        <div :class="{'modal-background animate__animated animate__faster':true, 'animate__fadeIn':dialog }"></div>
+        <div :class="{'modal-card animate__animated':true, 'animate__fadeInDown':dialog }">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Sei sicuro?</p>
+            <button class="delete" aria-label="close" @click="toggle_dialog"></button>
+          </header>
+          <section class="modal-card-body">
+            <template v-if="user_keep.size > 0">
+              Hai deciso di <b>mantenere in gioco</b> questi numeri:
+              <p><span v-for="n,i of user_keep">{{n}}<span v-if="i< user_keep.size-1"> - </span></span></p>
+            </template>
+            <template v-else>
+              Non vuoi <b>mantenere in gioco</b> nessun numero?.
+            </template>
+
+          </section>
+          <footer class="modal-card-foot">
+            <button class="button is-success" @click="toggle_dialog(); checks();">Si, confermo</button>
+            <button class="button is-danger" @click="toggle_dialog">Fammi pensare</button>
+          </footer>
         </div>
       </div>
       <div class="hero-head">
@@ -210,16 +229,141 @@
           <div class="container">
           <div class="columns is-centered animate__animated animate__fadeIn" style="min-width: 100%;">
             <div :class="{'column':true, 'is-10 is-10-fullhd':current_numbers.length>3, 'is-7':current_numbers.length<=3}">
-              <div v-if="current_numbers.length > 1" class="grid-container animate__animated animate__fadeIn animate__slow" :style="{'grid-template-columns': get_grid}">
+              <template v-if="current_numbers.length > 1">
+                <template id="to-many-cards" v-if="current_question > active_questions.length - 1">
+                  <div class="box animate__animated animate__shakeX" class="">
+                    <article class="media">
+                      <figure class="media-left">
+                        <div class="icon" style="width: 70px;">
+                          <i class="far fa-meh fa-3x"></i>
+                        </div>
+                      </figure>
+                      <div class="media-content">
+                        <div class="content">
+                          <div class="content">
+                            <h2>Qualcosa non va!</h2>
+                            <p>Pare che siano rimaste trope carte sulla plancia!</p>
+                            <p>Ma gli indizi sono finiti.</p>
+                            <p>Rivediamo la vostra partita</p>
+                            <button class="button is-success" type="button" name="button" @click="toggle_phase('what_happened')">Ok</button>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                </template>
+                <template id="regular-game" v-else>
+                  <div class="grid-container animate__animated animate__fadeIn animate__slow" :style="{'grid-template-columns': get_grid}">
+                      <div v-for="n in current_numbers"
+                        :class="{
+                          'image num num-has-shadow animate__animated filler':true,
+                          'glow-right animate__bounce':user_keep.has(n) || game_deck.checked && game_deck.is_eliminating && !eliminated.has(n),
+                          'glow animate__flipOutX animate__fast': game_deck.is_eliminating && eliminated.has(n)
+                        }"
+                        :style="{'animation-delay':delay(n)}"
+                        @click="toggle_user_keep(n)"
+                      >
+                        <img :src="get_image(n)" alt="">
+                        <a v-if="games.info[n]"  type="button" class="num-info" name="button" @click.stop="get_info(n)">
+                          <div class="icon">
+                            <i class="fas fa-info-circle"></i>
+                          </div>
+                        </a>
+                        <span style="position:absolute;">{{n}}</span>
+                      </div>
+                  </div>
+                </template>
+              </template>
+              <template id="to-many-deletions" v-else-if="current_numbers.length == 0">
+                <div class="box animate__animated animate__shakeX" class="">
+                  <article class="media">
+                    <figure class="media-left">
+                      <div class="icon" style="width: 70px;">
+                        <i class="far fa-sad-cry fa-3x"></i>
+                      </div>
+                    </figure>
+                    <div class="media-content">
+                      <div class="content">
+                        <h2>Oh no!</h2>
+                        <p>Pare che tu abbia eliminato troppe carte!</p>
+                        <p>Rivediamo la vostra partita</p>
+                        <button class="button is-success" type="button" name="button" @click="toggle_phase('what_happened')">Ok</button>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </template>
+              <template v-else-if="current_numbers.length == 1">
+                <template id="right"v-if="current == current_numbers[0]">
+                  <div class="columns is-centered is-vcentered">
+                    <div class="column is-4">
+                      <div
+                        :class="{
+                          'image animate__animated':true,
+                          'animate__tada':game_deck.tada,
+                          'animate__pulse animate__slow':!game_deck.tada
+                        }"
+                        :style="{'animation-iteration-count': !game_deck.tada || 'infinite'}"
+                        >
+                        <img :src="`./assets/images/numbers/${current}.png`" alt="right guess">
+                      </div>
+                    </div>
+                    <div class="column is-narrow">
+                      <p v-for="a, i in active_questions">{{a[2]}}
+                        <span v-if="game.answers[i]" class="is-size-3"> SI! <span class="icon has-text-primary"> <i class="fas fa-check"></i></span></span>
+                        <span v-else class="is-size-3"> NO! <span class="icon has-text-danger"> <i class="fas fa-times"></i></span></span>
+                      </p>
+                    </div>
+                  </div>
+                </template>
+                <template id="wrong" v-else>
+                  <div class="box animate__animated animate__shakeX" class="">
+                    <article class="media">
+                      <figure class="media-left">
+                        <div v-if="sneaky" class="icon" style="width: 70px;">
+                          <i class="far fa-surprise fa-3x"></i>
+                        </div>
+                        <div v-else class="icon" style="width: 70px;">
+                          <i class="far fa-frown fa-3x"></i>
+                        </div>
+                      </figure>
+                      <div class="media-content">
+                        <div class="content">
+                          <div class="content">
+                            <h2>Oh no!</h2>
+                            <p v-if="!sneaky">Non è questo il numero misterioso!</p>
+                            <p v-else class="has-text-success"> Eccolo!</p>
+                            <p>Metti il mouse sulla carta per svelarlo!</p>
+                            <p>Rivediamo la vostra partita</p>
+                            <button class="button is-success" type="button" name="button" @click="toggle_phase('what_happened')">Ok</button>
+                          </div>
+                        </div>
+                      </div>
+                      <figure class="media-right">
+                        <div class="flip-card" @mouseover="sneaky=true" @mouseleave="sneaky=false">
+                          <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                              <img :src="get_image(current_numbers[0])" alt="" style="width:145px">
+                            </div>
+                            <div class="flip-card-back">
+                              <img :src="get_image(current)" alt="" style="width:145px">
+                            </div>
+                          </div>
+                        </div>
+                      </figure>
+                    </article>
+                  </div>
+                </template>
+              </template>
+              <!-- <div class="grid-container animate__animated animate__fadeIn animate__slow" :style="{'grid-template-columns': get_grid}">
                   <div v-for="n in current_numbers"
                     :class="{
                       'image num num-has-shadow animate__animated filler':true,
-                      'glow animate__bounce':fake_eliminated.has(n),
-                      'glow-right':game_deck.checked && game_deck.is_eliminating && !eliminated.has(n),
+                      'glow-right animate__bounce':user_keep.has(n) || game_deck.checked && game_deck.is_eliminating && !eliminated.has(n),
                       'glow animate__flipOutX animate__fast': game_deck.is_eliminating && eliminated.has(n)
                     }"
                     :style="{'animation-delay':delay(n)}"
-                    @click="toggle_fake_eliminated(n)"
+                    @click="toggle_user_keep(n)"
                   >
                     <img :src="get_image(n)" alt="">
                     <a v-if="games.info[n]"  type="button" class="num-info" name="button" @click.stop="get_info(n)">
@@ -230,7 +374,7 @@
                     <span style="position:absolute;">{{n}}</span>
                   </div>
               </div>
-              <div v-else class="columns is-centered is-vcentered">
+              <div v-else-if="current_numbers.length == 1 && current_question == active_questions.length - 1" class="columns is-centered is-vcentered">
                 <div class="column is-4">
                   <div
                     :class="{
@@ -249,11 +393,50 @@
                     <span v-else class="is-size-3"> NO! <span class="icon has-text-danger"> <i class="fas fa-times"></i></span></span>
                   </p>
                 </div>
-
               </div>
+              <div v-else-if="current_numbers.length > 1 && current_question == active_questions.length - 1" class="box animate__animated animate__shakeX" class="">
+                <article class="media">
+                  <figure class="media-left">
+                    <div class="icon" style="width: 70px;">
+                      <i class="far fa-meh fa-3x"></i>
+                    </div>
+                  </figure>
+                  <div class="media-content">
+                    <div class="content">
+                      <div class="content">
+                        <h2>Qualcosa non va!</h2>
+                        <p>Pare che siano rimaste trope carte sulla plancia!</p>
+                        <p>Ma gli indizi sono finiti.</p>
+                        <p>Rivediamo la vostra partita</p>
+                        <button class="button is-success" type="button" name="button">Ok</button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+              <div v-else-if="current_numbers.length == 0" class="box animate__animated animate__shakeX" class="">
+                <article class="media">
+                  <figure class="media-left">
+                    <div class="icon" style="width: 70px;">
+                      <i class="far fa-sad-cry fa-3x"></i>
+                    </div>
+                  </figure>
+                  <div class="media-content">
+                    <div class="content">
+                      <h2>Oh no!</h2>
+                      <p>Pare che tu abbia eliminato troppe carte!</p>
+                      <p>Rivediamo la vostra partita</p>
+                      <button class="button is-success" type="button" name="button">Ok</button>
+                    </div>
+                  </div>
+                </article>
+              </div> -->
             </div>
           </div>
         </div>
+        </template>
+        <template v-else-if="phases.what_happened">
+
         </template>
       </div>
       <!-- Hero footer: will stick at the bottom -->
@@ -267,9 +450,9 @@
                 </div>
           </div>
         </template>
-        <template v-else-if="phases.gameplay">
+        <template v-else-if="phases.gameplay && !splat">
           <div class="buttons is-centered" v-if="!question_deck.visible">
-            <button class="button" type="button" name="button" @click="question_deck.visible = true;"> Carte Domanda</button>
+            <button class="button" type="button" name="button" @click="question_deck.visible = true;"> Carte Indizio</button>
           </div>
         </template>
     </div>
