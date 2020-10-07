@@ -8,7 +8,8 @@ var app = new Vue({
       mode:false,
       picked: 0,
       answers:[],
-      history:[]
+      history:[],
+      history_wrong:[],
     },
     images_root: "assets/images/",
     chosing_deck:{
@@ -354,6 +355,8 @@ var app = new Vue({
         mode:false,
         picked: 0,
         answers:[],
+        history:[],
+        history_wrong:[]
       };
       this.chosing_deck = {
         card_list:[],
@@ -387,6 +390,7 @@ var app = new Vue({
       this.user_keep =  new Set();
       this.current_numbers = [];
       this.current_question = 0;
+      this.dialog = false;
     },
     romanize: function(num) {
         if (isNaN(num))
@@ -668,7 +672,30 @@ var app = new Vue({
           root.info.is_hiding_info = false;
         }, 500)
       }
-    }
+    },
+    history_wrong: function(){
+      for(h in this.game.history){
+        var hist = this.game.history[h]
+        if(hist.should_keep.length != hist.user_kept.length){
+          not_keep = hist.user_kept.filter(el => ! new Set(hist.should_keep).has(el))
+        }
+        if(hist.should_delete.length != hist.user_deleted.length){
+          not_delete = hist.user_deleted.filter(el => ! new Set(hist.should_delete).has(el))
+        }
+        console.log(  {
+            question: hist.question,
+            not_keep: not_keep,
+            not_delete: not_delete
+          });
+        this.game.history_wrong.push(
+          {
+            question: hist.question,
+            not_keep: not_keep,
+            not_delete: not_delete
+          }
+        )
+      }
+    },
   },
   computed:{
     questions: function(){

@@ -139,7 +139,7 @@
                 <span></span>
               </span>
             </div>
-            <div v-if="phases.gameplay" id="navbarMenuHeroA" class="navbar-menu animate__animated animate__fadeInDown">
+            <div v-if="phases.gameplay || phases.what_happened" id="navbarMenuHeroA" class="navbar-menu animate__animated animate__fadeInDown">
               <div class="navbar-end">
                 <span class="navbar-item">
                   <a class="button" @click="reset">
@@ -245,7 +245,7 @@
                             <p>Pare che siano rimaste trope carte sulla plancia!</p>
                             <p>Ma gli indizi sono finiti.</p>
                             <p>Rivediamo la vostra partita</p>
-                            <button class="button is-success" type="button" name="button" @click="toggle_phase('what_happened')">Ok</button>
+                            <button class="button is-success" type="button" name="button" @click="history_wrong(); toggle_phase('what_happened')">Ok</button>
                           </div>
                         </div>
                       </div>
@@ -287,7 +287,7 @@
                         <h2>Oh no!</h2>
                         <p>Pare che tu abbia eliminato troppe carte!</p>
                         <p>Rivediamo la vostra partita</p>
-                        <button class="button is-success" type="button" name="button" @click="toggle_phase('what_happened')">Ok</button>
+                        <button class="button is-success" type="button" name="button" @click="history_wrong(); toggle_phase('what_happened')">Ok</button>
                       </div>
                     </div>
                   </article>
@@ -310,8 +310,8 @@
                     </div>
                     <div class="column is-narrow">
                       <p v-for="a, i in active_questions">{{a[2]}}
-                        <span v-if="game.answers[i]" class="is-size-3"> SI! <span class="icon has-text-primary"> <i class="fas fa-check"></i></span></span>
-                        <span v-else class="is-size-3"> NO! <span class="icon has-text-danger"> <i class="fas fa-times"></i></span></span>
+                        <!-- <span v-if="game.answers[i]" class="is-size-3"> SI! <span class="icon has-text-primary"> <i class="fas fa-check"></i></span></span>
+                        <span v-else class="is-size-3"> NO! <span class="icon has-text-danger"> <i class="fas fa-times"></i></span></span> -->
                       </p>
                     </div>
                   </div>
@@ -335,7 +335,7 @@
                             <p v-else class="has-text-success"> Eccolo!</p>
                             <p>Metti il mouse sulla carta per svelarlo!</p>
                             <p>Rivediamo la vostra partita</p>
-                            <button class="button is-success" type="button" name="button" @click="toggle_phase('what_happened')">Ok</button>
+                            <button class="button is-success" type="button" name="button" @click="history_wrong(); toggle_phase('what_happened')">Ok</button>
                           </div>
                         </div>
                       </div>
@@ -436,7 +436,41 @@
         </div>
         </template>
         <template v-else-if="phases.what_happened">
-
+          <div class="columns is-centered">
+            <div class="column is-half">
+              <h1 class="is-size-2">Ecco gli errori</h1>
+              <div v-for="h in game.history_wrong" class="box">
+                <div class="content">
+                  <h3>{{h.question}}</h3>
+                  <template v-if="h.not_delete.length > 0">
+                    <p> Non avresti dovuto eliminare queste carte</p>
+                    <div class="columns is-multiline">
+                      <div v-for="d in h.not_delete" class="column is-2">
+                        <div class="image">
+                          <img :src="get_image(d)" alt="">
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                  <template v-if="h.not_keep.length > 0">
+                    <p> Non avresti dovuto conservare queste carte</p>
+                    <div class="columns is-multiline">
+                      <div v-for="d in h.not_keep" class="column is-2">
+                        <div class="image">
+                          <img :src="get_image(d)" alt="">
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+              <div class="box">
+                <div class="button is-success is-fullwidth" @click="reset">
+                  Ho capito!
+                </div>
+              </div>
+            </div>
+          </div>
         </template>
       </div>
       <!-- Hero footer: will stick at the bottom -->
