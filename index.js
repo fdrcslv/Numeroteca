@@ -75,8 +75,8 @@ var app = new Vue({
       is_made_of_n_digits_equal: arg => [[arg], `È composto da ${arg} cifre uguali?`],
       is_result_from_expression: arg => [[arg], `È il risultato della seguente espressione ${arg} ? `],
       its_modulus_is_lesser_than: arg =>[[arg] `Il suo modulo è minore di ${arg}`],
-      is_natural_and_even: arg =>[[], "È un numero naturale dispari?"],
-      is_natural_and_odd: arg =>[[],  "È un numero naturale pari?"],
+      is_natural_and_even: arg =>[[], "È un numero naturale pari?"],
+      is_natural_and_odd: arg =>[[],  "È un numero naturale dispari?"],
       is_made_of_n_significant_digits: arg => [[arg], `È composto da ${arg} cifr${arg==1 ? 'a':'e'} significativ${arg==1 ? 'a':'e'}?`],
       is_even_and_multiple_of: arg => [[arg], `È un numero pari multiplo di ${arg}?`],
       is_bigger_then: arg => [[arg], `È maggiore di ${arg}?`],
@@ -209,7 +209,7 @@ var app = new Vue({
           return matches.every(is_contained)
         },
         has_length: function(n, l){
-          return n.toString().replace('-','').length == l
+          return n.toString().replace('-','').replace('.','').length == l
         },
         has_length_or_more: function(n, l){
           return n.toString().replace('-','').length >= l
@@ -574,6 +574,8 @@ var app = new Vue({
         if(root.star_numbers[el]){
           if(root.need_repr.has(type)){
             temp_el = (root.star_numbers[el].repr ? el :  root.star_numbers[el].value)
+          } else if(root.needs_key.has(type)){
+            temp_el = el
           } else {
             temp_el = root.star_numbers[el].value
           }
@@ -608,7 +610,8 @@ var app = new Vue({
       `numbers/` +
       n.toString()
         .replace('.','point')
-        .replace('/', 'over') +
+        .replace('/', 'over')
+        .replace('-', 'minus') +
       extension
       console.log(image);
       return image
