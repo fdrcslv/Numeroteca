@@ -52,22 +52,6 @@ The structure of the json is this:
   }
 }
 ```
-### 1.1 Question formatting for the GNuCCI version of the game
-
-Since the different nature of the GNuCCI (Gioco NUmerico Con Carte Indizio) version of the game, every element of questions array holds the answer of the question itself I.E.
-
-```
-      {
-        current:11,
-        questions:[
-          "YES:is_odd",
-          "NO:is_multiple_of(5)",
-          "NO:is_irrational,
-           ...
-        ]
-      },
-```
-
 
 ## 2. Questions
 
@@ -114,6 +98,22 @@ a question needs am additional parameter (i.e. is_multiple_of) the string will b
 
 If the question doesn't need a parameter (i.e. is_irrational), just write ```"is_irrational"``` in the list of questions.
 
+### 2.3 Question formatting for the GNuCCI version of the game
+
+Since the different nature of the GNuCCI (Gioco NUmerico Con Carte Indizio) version of the game, every element of questions array holds the answer of the question itself I.E.
+
+```
+      {
+        current:11,
+        questions:[
+          "YES:is_odd",
+          "NO:is_multiple_of(5)",
+          "NO:is_irrational,
+           ...
+        ]
+      },
+```
+
 ### 2.2.1 Example of questions for the number 11
 
 ```
@@ -153,4 +153,8 @@ For special carachters and properties we use this table of substitutions:
 |.|point|
 |periodic number|p|
 
-So for example the number -1/8 maps to minus1over8.png
+### 4.1 Examples
+
+-1/8 => minus1over8.png
+3.25 => 3point25.png
+0.33333.. => 0point3p
