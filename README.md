@@ -147,7 +147,7 @@ File names for the number cards map simply to the number itself: 1.png for the n
 For special carachters and properties we use this table of substitutions:
 
 |Symbol|Substitution|
-|--|--|
+|:--:|:--:|
 |-|minus|
 |/|over|
 |.|point|
@@ -156,5 +156,7 @@ For special carachters and properties we use this table of substitutions:
 ### 4.1 Examples
 
 -1/8 => minus1over8.png
+
 3.25 => 3point25.png
+
 0.33333.. => 0point3p
