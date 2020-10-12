@@ -51,8 +51,24 @@ The structure of the json is this:
     games:[...]
   }
 }
+```
+### 1.1 Question formatting for the GNuCCI version of the game
+
+Since the different nature of the GNuCCI (Gioco NUmerico Con Carte Indizio) version of the game, every element of questions array holds the answer of the question itself I.E.
 
 ```
+      {
+        current:11,
+        questions:[
+          "YES:is_odd",
+          "NO:is_multiple_of(5)",
+          "NO:is_irrational,
+           ...
+        ]
+      },
+```
+
+
 ## 2. Questions
 
 ### 2.1 Supported Questions
