@@ -3,7 +3,7 @@ name: Pull repository
 #on: [push]
 on:
   push:
-    branches: [ master ]
+    branches: [ G.Nu.C.C.I ]
     
 jobs:
   clone:
